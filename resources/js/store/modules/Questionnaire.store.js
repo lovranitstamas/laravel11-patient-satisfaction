@@ -99,6 +99,15 @@ const actions = {
             },
           })
           .then(r => {
+            if (r.data.errors) {
+              if (r.data.errors[0]?.extensions?.debugMessage) {
+                return Promise.reject(new Error(r.data.errors[0].extensions.debugMessage));
+              } else {
+                const errorMessage = r.data.errors[0].message || 'An unknown error occurred.';
+                return Promise.reject(new Error(errorMessage));
+              }
+            }
+
             return r.data.data[QUERY_NAME];
           })
           .then(res => {
@@ -124,14 +133,12 @@ const mutations = {
   [TYPES.mutations.setQuestion](state, payload) {
     state.questions = payload;
 
-    /*
     if (state.questionsInitStateLength === 0) {
       state.questionsInitStateLength = payload.filter(e => {
         return e;
         //return moment().format('YYYY-MM-DD') === moment(e['created_at']).format('YYYY-MM-DD');
       }).length;
     }
-    */
   },
 
 };

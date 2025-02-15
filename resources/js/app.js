@@ -18,7 +18,7 @@ import App from './App.vue';
 const app = createApp(App);
 
 // ! ==== BOOTSTRAP ==== ! //
-import { createBootstrap } from 'bootstrap-vue-next';
+import {createBootstrap} from 'bootstrap-vue-next';
 import * as BootstrapVueNext from 'bootstrap-vue-next';
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -47,9 +47,7 @@ files.keys().map(key => {
 
 // ! ==== VUE ROUTER ==== ! //
 import router from './router';
-app.use(router);
-
-app.mount('#app');
+app.use(router)
 // ! ==== END OF VUE ROUTER ==== ! //
 
 
@@ -82,3 +80,77 @@ window.domainHttps = window.location.protocol + "//" + window.location.host === 
     '' : "https://lovranitstamas.eu/laravel11-patient-satisfaction/public";
 
 // ! ==== AUTO VUE COMPONENT REGISTRATION ==== ! //
+
+// ! ==== DEBOUNCE VUETIFY ==== ! //
+import {vueDebounce} from "vue-debounce";
+// ! ==== END OF DEBOUNCE ==== ! //
+
+// ! ==== INTERCEPTOR ==== ! //
+import {
+  SET_SNACKBAR,
+  TOGGLE_SNACKBAR
+} from './store/constants'
+
+app.mixin({
+  data() {
+    return {
+      isLoading: false,
+    }
+  },
+  beforeCreate() {
+    axios.interceptors.request.use(
+        req => {
+          this.isLoading = true
+          return req
+        },
+        err => {
+          this.isLoading = false
+          return Promise.reject(err)
+        },
+    )
+
+    axios.interceptors.response.use(
+        resp => {
+          this.isLoading = false
+          if (resp.data.errors) {
+            //console.log(resp.data.errors);
+            //console.log(resp.data.errors.filter(e => e.message === 'validation').map(e => Object.values(e.extensions.validation))); // [0] [0]
+            //console.log(resp.data.errors.filter(e => e.message === 'validation').map(e => Object.values(e.extensions.validation).flat())); // [0]
+            //console.log(resp.data.errors.filter(e => e.message === 'validation').map(e => Object.values(e.extensions.validation).flat()).flat()); //['er']
+            const messages = resp.data.errors.filter(e => e.message === 'validation').map(e => Object.values(e.extensions.validation).flat()).flat()
+            if (messages.length) {
+
+              store.commit(SET_SNACKBAR, {show: true, messages: messages})
+              // to block the default popup window and lis
+              return Promise.reject(null)
+            }
+            // return Promise.reject(resp.data.errors)
+            // we manage the error in store module in then case
+            return resp
+          }
+          return resp
+        },
+        err => {
+          this.isLoading = false
+          // we must put all key in conditional because, we may get null response from previous case
+          if (err?.response?.status === 422 || err?.message?.extensions?.category === 'validation') {
+            store.commit(TOGGLE_SNACKBAR,
+                {show: true, messages: [err.response.data.message], color: '#b45309'})
+          }
+          if (err?.response?.status === 500) {
+            const date = new Date()
+            const dateTime = `${date.toLocaleDateString('hu')} ${date.toLocaleTimeString('hu')}`
+            store.commit(TOGGLE_SNACKBAR,
+                {
+                  show: true,
+                  messages: [`Szerverhiba történt! Próbálja újra vagy kérjen segítséget az üzemeltetőtől - Hibakód: 500 - ${dateTime}`],
+                })
+          }
+          return Promise.reject(err)
+        },
+    )
+  },
+})
+
+app.directive('debounce', vueDebounce({lock: true}))
+    .mount('#app');

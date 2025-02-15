@@ -6,6 +6,18 @@
 
     <div class="w-75 mx-auto">
 
+      <!-- search bar -->
+      <v-row v-if="questionCollectionInitStateLength > 0">
+        <v-col cols="12">
+          <v-text-field
+              v-model="search"
+              class="my-4"
+              label="Keresés kérdés alapján"
+              v-debounce:300ms="fetchData"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+
       <v-data-table
           v-if="questionCollection.length"
           :headers="!isMobile ? headers : mobileHeaders"
@@ -13,6 +25,7 @@
           :loading-text="'Loading...'"
           disable-pagination
           hide-default-footer
+          :loading="$root.isLoading"
       >
 
         <!-- header -->
@@ -90,7 +103,7 @@ export default {
   computed: {
     ...mapState({}),
     ...mapGetters('Survey', ["surveyCollection"]),
-    ...mapGetters('Questionnaire', ["headers", "mobileHeaders", "questionCollection"])
+    ...mapGetters('Questionnaire', ["headers", "mobileHeaders", "questionCollection", "questionCollectionInitStateLength"])
   },
 
   mounted: function () {

@@ -41,7 +41,7 @@ class QuestionsQuery extends Query
 
     $query = $query->where(function ($query) use ($args) {
       if (isset($args['search'])) {
-        $query->where('name', 'LIKE', "%{$args['search']}%");
+        $query->where('question', 'LIKE', "%{$args['search']}%");
       }
       return $query;
     });

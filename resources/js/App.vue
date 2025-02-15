@@ -1,5 +1,8 @@
 <template>
   <main class="text-center">
+
+    <Snackbar></Snackbar>
+
     <div class="alert-info alert">test</div>
 
     <div>
@@ -48,8 +51,15 @@
 </template>
 
 <script>
+
+import Snackbar from "./components/Layout/Snackbar.vue";
+
 export default {
-  name: "App"
+  name: "App",
+
+  components: {
+    Snackbar
+  }
 }
 </script>
 
