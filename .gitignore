@@ -21,3 +21,8 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+public/js
+public/css
+public/mix-manifest.json
+public/js/app.js.LICENSE.txt
