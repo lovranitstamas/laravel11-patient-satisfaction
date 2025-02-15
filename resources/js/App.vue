@@ -1,6 +1,11 @@
 <template>
   <main class="text-center">
     <div class="alert-info alert">test</div>
+
+    <div>
+      <i class="fa-solid fa-house fa-2x"></i>
+    </div>
+
     <div class="mt-5">
       <b-badge variant="primary">Primary</b-badge>
       <b-badge variant="secondary">Secondary</b-badge>
