@@ -34,14 +34,20 @@ for (const componentName in BootstrapVueNext) {
 }
 // ! ==== END OF BOOTSTRAP ==== ! //
 
-// Automatikus Vue komponens regisztráció
+// ! ==== VUE COMPONENTS ==== ! //
 const files = require.context("./", true, /\.vue$/i);
 files.keys().map(key => {
   const componentConfig = files(key);
   const componentName = key.split('/').pop().split('.')[0];
   app.component(componentName, componentConfig.default || componentConfig);
 });
+// ! ==== END OF VUE COMPONENTS ==== ! //
+
+// ! ==== VUE ROUTER ==== ! //
+import router from './router';
+app.use(router);
 
 app.mount('#app');
+// ! ==== END OF VUE ROUTER ==== ! //
 
 // ! ==== AUTO VUE COMPONENT REGISTRATION ==== ! //

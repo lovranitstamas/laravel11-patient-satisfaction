@@ -42,6 +42,8 @@
       </b-button>
     </div>
 
+    <router-view/>
+
   </main>
 </template>
 
