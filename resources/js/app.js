@@ -17,6 +17,23 @@ import App from './App.vue';
 
 const app = createApp(App);
 
+// ! ==== BOOTSTRAP ==== ! //
+import { createBootstrap } from 'bootstrap-vue-next';
+import * as BootstrapVueNext from 'bootstrap-vue-next';
+
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
+
+app.use(createBootstrap())
+
+//registration all components (for example BBadge)
+for (const componentName in BootstrapVueNext) {
+  if (Object.prototype.hasOwnProperty.call(BootstrapVueNext, componentName)) {
+    app.component(componentName, BootstrapVueNext[componentName]);
+  }
+}
+// ! ==== END OF BOOTSTRAP ==== ! //
+
 // Automatikus Vue komponens regisztráció
 const files = require.context("./", true, /\.vue$/i);
 files.keys().map(key => {
