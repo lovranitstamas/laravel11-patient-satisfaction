@@ -7,12 +7,12 @@ export default {
 <template>
   <div class="m-1">
 
-    <h1 class="mb-2 mt-1">HomePage</h1>
+    <h1 class="mb-2 mt-1">Kezdőlap</h1>
 
     <div class="mt-3">
-        <RouterLink to="/test">
+        <RouterLink to="/questionnaire">
           <button class="btn btn-primary">
-            Tesztmenu
+            Kérdőív
           </button>
         </RouterLink>
     </div>

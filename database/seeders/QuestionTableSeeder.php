@@ -35,6 +35,30 @@ class QuestionTableSeeder extends Seeder
       'question' => 'Mennyi időt kellett várnia a vizsgálatra vagy kezelésre az érkezése után?',
       'survey_id' => null
     ],
+    [
+      'question' => 'Mennyire volt gördülékeny a betegfelvételi folyamat?',
+      'survey_id' => null
+    ],
+    [
+      'question' => 'Kapott-e megfelelő információt a kezelés utáni teendőkről?',
+      'survey_id' => null
+    ],
+    [
+      'question' => 'Mennyire volt elégedett az egészségügyi intézmény kommunikációjával?',
+      'survey_id' => null
+    ],
+    [
+      'question' => 'Milyen szintű bizalmat érzett az orvosával kapcsolatban?',
+      'survey_id' => null
+    ],
+    [
+      'question' => 'Mennyire volt gördülékeny a betegfelvételi folyamat?',
+      'survey_id' => null
+    ],
+    [
+      'question' => 'Ajánlaná-e ezt az egészségügyi intézményt másoknak?',
+      'survey_id' => null
+    ],
   ];
 
   /**

@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\GraphQL\Types\Pagination\CustomPagination;
+use App\GraphQL\Types\Pagination\PaginationLinkType;
+
 return [
   'route' => [
     // The prefix for routes; do NOT use a leading slash!
@@ -75,14 +78,16 @@ return [
   'schemas' => [
     'default' => [
       'query' => [
-        // ExampleQuery::class,
+        'surveysQuery' => App\GraphQL\Queries\SurveysQuery::class,
+        'questionsQuery' => App\GraphQL\Queries\QuestionsQuery::class,
       ],
       'mutation' => [
         // ExampleMutation::class,
       ],
       // The types only available in this schema
       'types' => [
-        // ExampleType::class,
+        'SurveyType' => App\GraphQL\Types\SurveyType::class,
+        'QuestionType' => App\GraphQL\Types\QuestionType::class,
       ],
 
       // Laravel HTTP middleware
@@ -109,6 +114,7 @@ return [
     // ExampleType::class,
     // ExampleRelationType::class,
     // \Rebing\GraphQL\Support\UploadType::class,
+    PaginationLinkType::class,
   ],
 
   // This callable will be passed the Error object for each errors GraphQL catch.
@@ -144,7 +150,10 @@ return [
    * You can define your own pagination type.
    * Reference \Rebing\GraphQL\Support\PaginationType::class
    */
-  'pagination_type' => Rebing\GraphQL\Support\PaginationType::class,
+  //'pagination_type' => Rebing\GraphQL\Support\PaginationType::class,
+  // custom pagination contains all response key
+  // db response
+  'pagination_type' => CustomPagination::class,
 
   /*
    * You can define your own simple pagination type.

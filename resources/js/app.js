@@ -34,6 +34,7 @@ for (const componentName in BootstrapVueNext) {
 }
 // ! ==== END OF BOOTSTRAP ==== ! //
 
+
 // ! ==== VUE COMPONENTS ==== ! //
 const files = require.context("./", true, /\.vue$/i);
 files.keys().map(key => {
@@ -43,11 +44,41 @@ files.keys().map(key => {
 });
 // ! ==== END OF VUE COMPONENTS ==== ! //
 
+
 // ! ==== VUE ROUTER ==== ! //
 import router from './router';
 app.use(router);
 
 app.mount('#app');
 // ! ==== END OF VUE ROUTER ==== ! //
+
+
+// ! ==== VUE STORE ==== ! //
+import store from "./store/store";
+app.use(store);
+// ! ==== END OF VUE STORE ==== ! //
+
+
+// ! ==== VUETIFY ==== ! //
+import {createVuetify} from 'vuetify';
+import 'vuetify/styles';
+import {aliases, mdi} from 'vuetify/iconsets/mdi';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
+
+const vuetify = createVuetify({
+  components,
+  directives,
+  icons: {
+    defaultSet: 'mdi',
+    aliases,
+    sets: {mdi},
+  },
+});
+app.use(vuetify);
+// ! ==== END OF VUETIFY ==== ! //
+
+window.domainHttps = window.location.protocol + "//" + window.location.host === 'http://127.0.0.1:8000' ?
+    '' : "https://lovranitstamas.eu/laravel11-patient-satisfaction/public";
 
 // ! ==== AUTO VUE COMPONENT REGISTRATION ==== ! //

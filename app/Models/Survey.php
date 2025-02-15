@@ -10,10 +10,6 @@ class Survey extends Model
   use HasFactory;
 
   protected $fillable = [
-    'submitter_name',
-    'email',
-    'survey_id',
-    'question_id',
-    'response'
+    'name',
   ];
 }
