@@ -35,7 +35,7 @@ const initialState = () => ({
       width: '20%'
     },
     {
-      title: "Question",
+      title: "Kérdés",
       value: "question",
       align: 'center',
       sortable: false,
