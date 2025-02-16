@@ -83,6 +83,8 @@
         </v-col>
       </v-row>
 
+      <p class="text-start text-danger fw-bold">A lakattal ellátott kérdések nem módosíthatók/törölhetők már meglévő válaszok miatt!</p>
+
       <!-- table -->
       <v-data-table
           v-if="questionCollection.length"
@@ -109,11 +111,19 @@
           <div class="d-flex justify-content-center align-items-center text-center text-uppercase mt-1">
             <span v-html="item.id_question" class="d-block ms-5"></span>
             <v-icon
-                @click=""
+                v-if="!item.exists_in_surveys"
+                @click="loadQuestionnaireData(item)"
                 :class="{ 'text-green': true }"
                 class="mx-2 p-0"
             >
               mdi-pencil
+            </v-icon>
+            <v-icon v-if="item.exists_in_surveys"
+                    @click=""
+                    :class="{ 'text-red': true }"
+                    size="x-large"
+            >
+              mdi-lock
             </v-icon>
           </div>
         </template>
@@ -261,6 +271,8 @@ export default {
       this.fillQuestionnaire(this.storedQuestionnaire, questionnaireEntry);
 
       this.isUpdateMode = true;
+
+      window.scrollTo(0, 0);
 
     },
 
