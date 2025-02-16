@@ -18,16 +18,18 @@
         <div class="row">
           <div class="col-12 col-md-4">
             <v-select
-                v-model="selectedSurvey"
+                :disabled="pageLoad || isUpdateMode"
+                ref="survey_id"
+                v-model="questionnaire.survey_id"
                 :items="surveyCollection"
                 item-title="name"
                 item-value="id"
                 label="Kérdőív"
-                :readonly="pageLoad"
             ></v-select>
           </div>
           <div class="col-12 col-md-8">
-            <v-text-field ref="question" label="Kérem adja meg a kérdést"></v-text-field>
+            <v-text-field ref="question" label="Kérem adja meg a kérdést"
+                          v-model="questionnaire.question"></v-text-field>
           </div>
         </div>
 
@@ -38,6 +40,31 @@
 
         <div class="alert alert-info text-center fw-bold mt-3" role="alert" v-show="inProgress">
           Mentés folyamatban
+        </div>
+
+        <div class="alert alert-success text-center font-weight-bold mt-3" role="alert" v-if="savingSuccessful">
+          Mentés megtörtént
+        </div>
+
+        <!-- modals -->
+        <b-modal ref="b-modal-form-error" ok-only centered title="Hiba" @ok="closeErrorModal()">
+          <ul class="my-4" v-if="errors.length">
+            <li v-for="error in errors">{{ error }}</li>
+          </ul>
+        </b-modal>
+
+        <div class="row">
+          <div class="col-12 col-md-6 mx-auto">
+            <button
+                type="button"
+                @click.prevent="checkForm(!isUpdateMode)"
+                :value="isUpdateMode ? 'Módosítás' : 'Mentés'"
+                class="btn btn-lg text-white"
+                :class="{'btn-success': isUpdateMode, 'btn-primary': !isUpdateMode}"
+                :disabled="inProgress || emptyDatabase"
+            ><!--Tovább-->{{ isUpdateMode ? 'Kérdés módosítása' : 'Új kérdés felvitele' }}
+            </button>
+          </div>
         </div>
 
       </form>
@@ -92,7 +119,7 @@
         <!--button-->
         <template v-slot:item.actions="{ item }">
           <v-icon
-              @click=""
+              @click="loadQuestionnaireData(item)"
               :class="{ 'text-green': true }"
           >
             mdi-pencil
@@ -131,12 +158,14 @@ export default {
       message: 'Oldal töltődik',
       pageLoad: true,
       questionCollectionLoaded: false,
+      emptyDatabase: true,
 
       changedNothing: false,
       inProgress: false,
+      isUpdateMode: false,
+      savingSuccessful: false,
 
       search: null,
-      selectedSurvey: null,
       isMobile: window.innerWidth <= 768,
 
       questionnaire: {
@@ -148,7 +177,8 @@ export default {
         id: '',
         survey_id: '',
         question: '',
-      }
+      },
+      errors: []
     }
   },
 
@@ -204,7 +234,7 @@ export default {
     ...mapActions("Table", ["setPage"]),
 
     ...mapActions("Survey", ["getSurveyData"]),
-    ...mapActions("Questionnaire", ["getQuestionData"]),
+    ...mapActions("Questionnaire", ["getQuestionData", "updateQuestionData"]),
 
     loadActions() {
       this.getSurveyData();
@@ -212,6 +242,157 @@ export default {
     },
 
     init() {
+    },
+
+    //load data
+    loadQuestionnaireData(questionnaireEntry) {
+      this.fillQuestionnaire(this.questionnaire, questionnaireEntry);
+      this.fillQuestionnaire(this.storedQuestionnaire, questionnaireEntry);
+
+      this.isUpdateMode = true;
+
+    },
+
+    fillQuestionnaire(questionnaire, storedQuestionnaire) {
+      questionnaire.id = storedQuestionnaire.id;
+      questionnaire.survey_id = storedQuestionnaire.survey.id;
+      questionnaire.question = storedQuestionnaire.question;
+    },
+
+    //send or update question
+    checkForm: function (newItem) {
+      let create = !newItem && this.questionnaire.id ? false : true;
+
+      if (this.isUpdateMode && !this.isQuestionnaireChanged()) {
+
+        this.changedNothing = true;
+        setTimeout(() => {
+          this.reInit();
+        }, 1000);
+        return;
+      }
+
+      this.closeErrorModal();
+
+      this.errors = [];
+      this.savingSuccessful = false;
+
+      if (this.isInputsValid()) {
+        this.inProgress = true;
+
+        if (create) {
+          /*this.saveEntry({questionnaire: this.questionnaire})
+              .then((resp) => {
+                this.closeSavingAndUpdating(resp);
+              })
+              .catch(err => {
+                if (err) {
+                  this.errors.push(err);
+                  this.errorOnSaveInPopup();
+                }
+                this.inProgress = false;
+                console.log(err)
+              })*/
+          this.closeSavingAndUpdating(null);
+        } else {
+          this.updateQuestionData({questionnaire: this.questionnaire})
+              .then((resp) => {
+                this.closeSavingAndUpdating(resp);
+              })
+              .catch(err => {
+                if (err) {
+                  this.errors.push(err);
+                  this.showErrorModal(true);
+                }
+                this.inProgress = false;
+                console.log(err)
+              })
+        }
+      } else {
+        this.fillUpErrorArray();
+        return false;
+      }
+    },
+
+    // validations
+    isQuestionnaireChanged() {
+      for (let key in this.questionnaire) {
+        if (this.questionnaire[key] !== this.storedQuestionnaire[key]) {
+          return true;
+        }
+      }
+      return false;
+    },
+
+    isInputsValid() {
+      return !!(this.questionnaire.survey_id && this.questionnaire.question);
+    },
+
+    // not changes and re-init form
+    reInit() {
+      this.setNullInputs();
+
+      this.isUpdateMode = false;
+      this.changedNothing = false;
+    },
+
+    setNullInputs() {
+      this.clearQuestionnaire(this.questionnaire);
+      this.clearQuestionnaire(this.storedQuestionnaire);
+    },
+
+    clearQuestionnaire(inventory) {
+      inventory.survey_id = inventory.question = '';
+    },
+
+    closeSavingAndUpdating(resp) {
+      if (resp && resp.data && !resp.data.errors) {
+
+        this.savingSuccessful = true;
+        this.isUpdateMode = false;
+        this.setNullInputs();
+
+        setTimeout(() => this.savingSuccessful = false, 5000);
+      } else if (resp && resp.data && resp.data.errors) {
+        // if we return r without reject and errors
+        resp.data.errors.forEach((error) => {
+          this.errors.push(error.message);
+        });
+      } else {
+        // If there is no specific answer, we still consider it successful
+        this.savingSuccessful = true;
+        this.isUpdateMode = false;
+
+        this.setNullInputs();
+        setTimeout(() => this.savingSuccessful = false, 5000);
+      }
+
+      this.inProgress = false;
+      return true;
+    },
+
+    // --------- error modals ---------
+    fillUpErrorArray() {
+      if (!this.questionnaire.survey_id) {
+        this.errors.push('Kérdőív kiválasztása kötelező.');
+      }
+
+      if (!this.questionnaire.question) {
+        this.errors.push('Kérdés megadása kötelező');
+      }
+
+      this.showErrorModal();
+    },
+
+    showErrorModal(shouldUpdate = false) {
+      this.$refs['b-modal-form-error'].show();
+      if (!shouldUpdate) {
+        this.isUpdateMode = false;
+      }
+    },
+
+    closeErrorModal() {
+      this.$refs['b-modal-form-error'].hide();
     },
 
     // --------- pagination ---------
