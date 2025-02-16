@@ -6,7 +6,6 @@ namespace App\GraphQL\Types;
 
 use App\Models\Question;
 use App\Models\Response;
-use App\Models\Survey;
 use GraphQL\Type\Definition\Type;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Type as GraphQLType;
@@ -33,21 +32,6 @@ class ResponseType extends GraphQLType
       'email' => [
         'type' => Type::getNullableType(Type::string()),
         'description' => 'The email is a string',
-      ],
-      'survey_id' => [
-        'type' => Type::getNullableType(Type::int()),
-        'description' => '',
-      ],
-      'survey' => [
-        'type' => GraphQL::type('SurveyType'),
-        'description' => 'Details of the survey',
-        'resolve' => function ($root, $args) {
-          return Survey::find($root['survey_id']);
-        },
-      ],
-      'question_id' => [
-        'type' => Type::getNullableType(Type::int()),
-        'description' => '',
       ],
       'question' => [
         'type' => GraphQL::type('QuestionType'),

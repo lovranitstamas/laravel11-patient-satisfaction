@@ -40,7 +40,7 @@ const initialState = () => ({
     },
     {
       title: "Kérdőív",
-      value: "survey.name",
+      value: "question.survey.name",
       align: 'center',
       sortable: false,
       width: '20%'
@@ -71,15 +71,13 @@ const state = {
     id,
     submitter_name,
     email,
-    survey_id,
-    question_id,
-    survey {
-      id
-      name,
-    }, 
     question {
       id
-      question
+      question,
+      survey {
+          id
+          name,
+      }
     },
     response,
     created_at
