@@ -10,7 +10,7 @@ export default {
     <h1 class="mt-5">Kezdőlap - Admin oldal</h1>
 
     <div>
-      <RouterLink to="/questionnaire">
+      <RouterLink to="/survey">
         <button class="btn btn-primary mt-5">
           Kérdőívek szerkesztése
         </button>
