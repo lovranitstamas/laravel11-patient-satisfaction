@@ -65,6 +65,12 @@ class UpdateQuestionMutation extends Mutation
 
   private function updateQuestionnaireByArgs(Question $question, array $args): bool
   {
+
+    // keep in query args if later will be used
+    if (isset($args['survey_id'])) {
+      unset($args['survey_id']);
+    }
+
     return $question->update($args);
   }
 }

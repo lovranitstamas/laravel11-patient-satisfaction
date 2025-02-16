@@ -131,7 +131,7 @@ const actions = {
   updateQuestionData({commit, rootGetters, dispatch, rootState}, {questionnaire}) {
 
     const id = questionnaire.id;
-    const surveyId = questionnaire.survey_id;
+    const surveyId = questionnaire.survey_id;  //will be removed - not necessary
     const question = questionnaire.question;
 
     const MUTATION_NAME = 'updateQuestionMutation';
