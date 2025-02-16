@@ -3,6 +3,7 @@
 
     <Snackbar></Snackbar>
 
+    <!--
     <div class="alert-info alert">test</div>
 
     <div>
@@ -44,6 +45,7 @@
         <b-badge variant="secondary">4</b-badge>
       </b-button>
     </div>
+    -->
 
     <router-view/>
 

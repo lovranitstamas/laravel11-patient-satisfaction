@@ -56,6 +56,10 @@ class QuestionsQuery extends Query
     ];
     */
 
-    return $query->paginate($args['per_page'] ?? 25, ['*'], 'page', $args['current_page'] ?? 1);
+    $totalResults = (clone $query)->toBase()->getCountForPagination();
+
+    $currentPage = (!empty($args['search']) && $totalResults < ($args['per_page'] ?? 25)) ? 1 : ($args['current_page'] ?? 1);
+
+    return $query->paginate($args['per_page'] ?? 25, ['*'], 'page', $currentPage);
   }
 }

@@ -6,6 +6,7 @@ export const TYPES = {
   },
   mutations: {
     setQuestion: "setQuestion",
+    updateQuestion: "updateQuestion",
   },
 };
 
@@ -58,6 +59,7 @@ const state = {
   questionsQueryResponse:
       `
     id,
+    exists_in_surveys,
     question,
     survey {
       id
@@ -71,7 +73,6 @@ const actions = {
   getQuestionData({commit, rootGetters, dispatch, rootState}, payload = {}) {
     const {search, orderBy} = payload;
 
-    // async [TYPES.actions.loadClientInventoryData]({commit, rootGetters, dispatch, rootState, state}) {
     const QUERY_NAME = 'questionsQuery';
     return new Promise(async (resolve, reject) => {
       await axios.post(
@@ -126,6 +127,62 @@ const actions = {
             reject(err);
           });
     })
+  },
+  updateQuestionData({commit, rootGetters, dispatch, rootState}, {questionnaire}) {
+
+    const id = questionnaire.id;
+    const surveyId = questionnaire.survey_id;  //will be removed - not necessary
+    const question = questionnaire.question;
+
+    const MUTATION_NAME = 'updateQuestionMutation';
+    return new Promise(async (resolve, reject) => {
+      await axios.post(
+          `${window.domainHttps}/graphql`, {
+            query:
+                `mutation ${MUTATION_NAME}(
+                    $id:Int!,
+                    $survey_id:Int!,
+                    $question:String!
+                 ) {
+                      ${MUTATION_NAME}(
+                        id:$id,
+                        survey_id:$survey_id,
+                        question:$question
+                      ) {
+                        ${state.questionsQueryResponse}
+                      }
+                    }                           
+                `,
+            variables: {
+              id: id,
+              survey_id: surveyId,
+              question: question,
+            },
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then(r => {
+            if (r.data.errors) {
+              if (r.data.errors[0]?.extensions?.debugMessage) {
+                return Promise.reject(new Error(r.data.errors[0].extensions.debugMessage));
+              } else {
+                const errorMessage = r.data.errors[0].message || 'An unknown error occurred.';
+                return Promise.reject(new Error(errorMessage));
+              }
+            }
+
+            return r.data.data[MUTATION_NAME];
+          })
+          .then(res => {
+            commit(TYPES.mutations.updateQuestion, res);
+            resolve();
+          }).catch((err) => {
+            reject(err);
+          });
+    })
   }
 };
 
@@ -136,11 +193,17 @@ const mutations = {
     if (state.questionsInitStateLength === 0) {
       state.questionsInitStateLength = payload.filter(e => {
         return e;
-        //return moment().format('YYYY-MM-DD') === moment(e['created_at']).format('YYYY-MM-DD');
       }).length;
     }
   },
-
+  [TYPES.mutations.updateQuestion](state, payload) {
+    state.questions.map(entry => {
+      if (entry.id === payload.id) {
+       entry.survey_id = payload.survey_id
+       entry.question = payload.question
+      }
+    });
+  }
 };
 const getters = {
   headers: (state) => state.headers,

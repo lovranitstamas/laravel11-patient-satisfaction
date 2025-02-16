@@ -82,7 +82,7 @@ return [
         'questionsQuery' => App\GraphQL\Queries\QuestionsQuery::class,
       ],
       'mutation' => [
-        // ExampleMutation::class,
+        'updateQuestionMutation' => App\GraphQL\Mutations\UpdateQuestionMutation::class,
       ],
       // The types only available in this schema
       'types' => [
