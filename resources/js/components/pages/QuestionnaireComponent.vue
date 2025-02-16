@@ -31,6 +31,15 @@
           </div>
         </div>
 
+        <!-- messages -->
+        <div class="alert alert-info text-center font-weight-bold mt-3" role="alert" v-if="changedNothing">
+          Nem történt változás. Vissza az új adatfelvitelre
+        </div>
+
+        <div class="alert alert-info text-center fw-bold mt-3" role="alert" v-show="inProgress">
+          Mentés folyamatban
+        </div>
+
       </form>
 
       <!-- search bar -->
@@ -122,6 +131,9 @@ export default {
       message: 'Oldal töltődik',
       pageLoad: true,
       questionCollectionLoaded: false,
+
+      changedNothing: false,
+      inProgress: false,
 
       search: null,
       selectedSurvey: null,
