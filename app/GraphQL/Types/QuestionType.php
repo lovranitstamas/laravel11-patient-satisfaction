@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Types;
 
-use App\Models\LoadingBay;
 use App\Models\Question;
 use App\Models\Survey;
 use GraphQL\Type\Definition\Type;
