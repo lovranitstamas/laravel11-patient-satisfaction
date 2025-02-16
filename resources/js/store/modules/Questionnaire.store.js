@@ -8,6 +8,7 @@ export const TYPES = {
     getQuestions: "getQuestions",
     storeQuestion: "storeQuestion",
     updateQuestion: "updateQuestion",
+    deleteQuestion: "deleteQuestion",
   },
 };
 
@@ -236,6 +237,54 @@ const actions = {
             reject(err);
           });
     })
+  },
+  deleteQuestion({commit, rootGetters, dispatch, rootState}, {questionnaire}) {
+
+    const id = questionnaire.id;
+
+    const MUTATION_NAME = 'deleteQuestionMutation';
+    return new Promise(async (resolve, reject) => {
+      await axios.post(
+          `${window.domainHttps}/graphql`, {
+            query:
+                `mutation ${MUTATION_NAME}(
+                    $id:Int!
+                 ) {
+                      ${MUTATION_NAME}(
+                        id:$id
+                      ) {
+                        ${state.questionsQueryResponse}
+                      }
+                    }                           
+                `,
+            variables: {
+              id: id
+            },
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then(r => {
+            if (r.data.errors) {
+              if (r.data.errors[0]?.extensions?.debugMessage) {
+                return Promise.reject(new Error(r.data.errors[0].extensions.debugMessage));
+              } else {
+                const errorMessage = r.data.errors[0].message || 'An unknown error occurred.';
+                return Promise.reject(new Error(errorMessage));
+              }
+            }
+
+            return r.data.data[MUTATION_NAME];
+          })
+          .then(res => {
+            commit(TYPES.mutations.deleteQuestion, res);
+            resolve();
+          }).catch((err) => {
+            reject(err);
+          });
+    })
   }
 };
 
@@ -259,6 +308,9 @@ const mutations = {
        entry.question = payload.question
       }
     });
+  },
+  [TYPES.mutations.deleteQuestion](state, payload) {
+    state.questions = state.questions.filter(entry => entry.id !== payload.id);
   }
 };
 const getters = {
