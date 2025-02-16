@@ -36,6 +36,15 @@ class QuestionsQuery extends Query
   {
 
     /** @var SelectFields $fields */
+    /*
+    $fields = $getSelectFields();
+    $select = $fields->getSelect();
+    $with = $fields->getRelations();
+
+    return [
+        'The surveys works',
+    ];
+    */
 
     $query = Question::query();
 
@@ -46,15 +55,7 @@ class QuestionsQuery extends Query
       return $query;
     });
 
-    /*
-    $fields = $getSelectFields();
-    $select = $fields->getSelect();
-    $with = $fields->getRelations();
-
-    return [
-        'The surveys works',
-    ];
-    */
+    $query = $query->orderByDesc('created_at');
 
     $totalResults = (clone $query)->toBase()->getCountForPagination();
 
