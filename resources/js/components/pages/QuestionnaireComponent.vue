@@ -75,6 +75,17 @@
 
       <h3 class="my-5 text-center">Kérdések listája</h3>
 
+      <!-- select listed survey -->
+      <v-select
+          :disabled="pageLoad || isUpdateMode"
+          v-model="selectedSurvey"
+          :items="surveyCollection"
+          item-title="name"
+          item-value="id"
+          label="Kérdőív kiválasztása"
+          @update:modelValue="handleSurveyChange"
+      ></v-select>
+
       <!-- search bar -->
       <v-row v-if="questionCollectionInitStateLength > 0">
         <v-col cols="12">
@@ -193,6 +204,7 @@ export default {
       deletingSuccessful: false,
 
       search: null,
+      selectedSurveyId: null,
       isMobile: window.innerWidth <= 768,
 
       questionnaire: {
@@ -319,7 +331,7 @@ export default {
                 this.closeSavingAndUpdating(resp);
 
                 this.setPage(1);
-                this.getQuestionData();
+                this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
               })
               .catch(err => {
                 if (err) {
@@ -417,7 +429,7 @@ export default {
 
             //load first page
             this.setPage(1);
-            this.getQuestionData();
+            this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
 
             setTimeout(() => this.deletingSuccessful = false, 5000);
           })
@@ -455,18 +467,24 @@ export default {
       this.$refs['b-modal-form-error'].hide();
     },
 
+    handleSurveyChange(selectedValue) {
+      this.selectedSurveyId = selectedValue;
+
+      this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
+    },
+
     // --------- pagination ---------
     handleResize() {
       this.isMobile = window.innerWidth <= 768;
     },
 
     fetchData() {
-      this.getQuestionData({search: this.search});
+      this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
     },
 
     setCurrentPage(e) {
       this.setPage(e);
-      this.getQuestionData({search: this.search});
+      this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
     },
   }
 
