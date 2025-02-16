@@ -39,11 +39,15 @@
         </div>
 
         <div class="alert alert-info text-center fw-bold mt-3" role="alert" v-show="inProgress">
-          Mentés folyamatban
+          Művelet folyamatban
         </div>
 
         <div class="alert alert-success text-center font-weight-bold mt-3" role="alert" v-if="savingSuccessful">
           Mentés megtörtént
+        </div>
+
+        <div class="alert alert-success text-center font-weight-bold mt-3" role="alert" v-if="deletingSuccessful">
+          Törlés megtörtént
         </div>
 
         <!-- modals -->
@@ -83,7 +87,9 @@
         </v-col>
       </v-row>
 
-      <p class="text-start text-danger fw-bold">A lakattal ellátott kérdések nem módosíthatók/törölhetők már meglévő válaszok miatt!</p>
+      <p class="text-start text-danger fw-bold">
+        A lakattal ellátott kérdések nem módosíthatók/törölhetők már meglévő válaszok miatt!
+      </p>
 
       <!-- table -->
       <v-data-table
@@ -119,7 +125,7 @@
               mdi-pencil
             </v-icon>
             <v-icon v-if="item.exists_in_surveys"
-                    @click=""
+                    @click="callDeleteFunction(item)"
                     :class="{ 'text-red': true }"
                     size="x-large"
             >
@@ -137,7 +143,7 @@
             mdi-pencil
           </v-icon>
           <v-icon v-if="!item.exists_in_surveys"
-                  @click=""
+                  @click="callDeleteFunction(item)"
                   :class="{ 'text-red': true }"
           >
             mdi-delete
@@ -184,6 +190,7 @@ export default {
       inProgress: false,
       isUpdateMode: false,
       savingSuccessful: false,
+      deletingSuccessful: false,
 
       search: null,
       isMobile: window.innerWidth <= 768,
@@ -255,7 +262,7 @@ export default {
     ...mapActions("Table", ["setPage"]),
 
     ...mapActions("Survey", ["getSurveyData"]),
-    ...mapActions("Questionnaire", ["getQuestionData", "storeQuestionData", "updateQuestionData"]),
+    ...mapActions("Questionnaire", ["getQuestionData", "storeQuestionData", "updateQuestionData", "deleteQuestion"]),
 
     loadActions() {
       this.getSurveyData();
@@ -285,7 +292,7 @@ export default {
     //send or update question
     checkForm: function (newItem) {
       //close snackbar;
-      this.setSnackbar({ show: false, messages: [] })
+      this.setSnackbar({show: false, messages: []})
 
       let create = !newItem && this.questionnaire.id ? false : true;
 
@@ -310,6 +317,9 @@ export default {
           this.storeQuestionData({questionnaire: this.questionnaire})
               .then((resp) => {
                 this.closeSavingAndUpdating(resp);
+
+                this.setPage(1);
+                this.getQuestionData();
               })
               .catch(err => {
                 if (err) {
@@ -394,6 +404,31 @@ export default {
 
       this.inProgress = false;
       return true;
+    },
+
+    callDeleteFunction(questionnaire) {
+      this.inProgress = true;
+      this.errors = [];
+
+      this.deleteQuestion({questionnaire: questionnaire})
+          .then(() => {
+            this.deletingSuccessful = true;
+            this.inProgress = false;
+
+            //load first page
+            this.setPage(1);
+            this.getQuestionData();
+
+            setTimeout(() => this.deletingSuccessful = false, 5000);
+          })
+          .catch(err => {
+            if (err) {
+              this.errors.push(err);
+              this.showErrorModal();
+            }
+            this.inProgress = false;
+            console.log(err)
+          });
     },
 
     // --------- error modals ---------
