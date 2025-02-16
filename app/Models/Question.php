@@ -11,7 +11,8 @@ class Question extends Model
   use HasFactory;
 
   protected $fillable = [
-    'question'
+    'survey_id',
+    'question',
   ];
 
   protected $appends = [

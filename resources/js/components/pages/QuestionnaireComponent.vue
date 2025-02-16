@@ -83,6 +83,8 @@
         </v-col>
       </v-row>
 
+      <p class="text-start text-danger fw-bold">A lakattal ellátott kérdések nem módosíthatók/törölhetők már meglévő válaszok miatt!</p>
+
       <!-- table -->
       <v-data-table
           v-if="questionCollection.length"
@@ -109,11 +111,19 @@
           <div class="d-flex justify-content-center align-items-center text-center text-uppercase mt-1">
             <span v-html="item.id_question" class="d-block ms-5"></span>
             <v-icon
-                @click=""
+                v-if="!item.exists_in_surveys"
+                @click="loadQuestionnaireData(item)"
                 :class="{ 'text-green': true }"
                 class="mx-2 p-0"
             >
               mdi-pencil
+            </v-icon>
+            <v-icon v-if="item.exists_in_surveys"
+                    @click=""
+                    :class="{ 'text-red': true }"
+                    size="x-large"
+            >
+              mdi-lock
             </v-icon>
           </div>
         </template>
@@ -121,20 +131,21 @@
         <!--button-->
         <template v-slot:item.actions="{ item }">
           <v-icon v-if="!item.exists_in_surveys"
-              @click="loadQuestionnaireData(item)"
-              :class="{ 'text-green': true }"
+                  @click="loadQuestionnaireData(item)"
+                  :class="{ 'text-green': true }"
           >
             mdi-pencil
           </v-icon>
           <v-icon v-if="!item.exists_in_surveys"
-              @click=""
-              :class="{ 'text-red': true }"
+                  @click=""
+                  :class="{ 'text-red': true }"
           >
             mdi-delete
           </v-icon>
           <v-icon v-if="item.exists_in_surveys"
                   @click=""
                   :class="{ 'text-red': true }"
+                  size="x-large"
           >
             mdi-lock
           </v-icon>
@@ -155,7 +166,8 @@
 <script>
 
 import PaginationFooter from "../Layout/PaginationFooter.vue";
-import {mapActions, mapGetters, mapState} from "vuex";
+import {SET_SNACKBAR} from "../../store/constants";
+import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 
 export default {
   name: "QuestionnaireComponent",
@@ -239,10 +251,11 @@ export default {
   },
 
   methods: {
+    ...mapMutations({setSnackbar: SET_SNACKBAR}),
     ...mapActions("Table", ["setPage"]),
 
     ...mapActions("Survey", ["getSurveyData"]),
-    ...mapActions("Questionnaire", ["getQuestionData", "updateQuestionData"]),
+    ...mapActions("Questionnaire", ["getQuestionData", "storeQuestionData", "updateQuestionData"]),
 
     loadActions() {
       this.getSurveyData();
@@ -259,6 +272,8 @@ export default {
 
       this.isUpdateMode = true;
 
+      window.scrollTo(0, 0);
+
     },
 
     fillQuestionnaire(questionnaire, storedQuestionnaire) {
@@ -269,6 +284,9 @@ export default {
 
     //send or update question
     checkForm: function (newItem) {
+      //close snackbar;
+      this.setSnackbar({ show: false, messages: [] })
+
       let create = !newItem && this.questionnaire.id ? false : true;
 
       if (this.isUpdateMode && !this.isQuestionnaireChanged()) {
@@ -289,19 +307,18 @@ export default {
         this.inProgress = true;
 
         if (create) {
-          /*this.saveEntry({questionnaire: this.questionnaire})
+          this.storeQuestionData({questionnaire: this.questionnaire})
               .then((resp) => {
                 this.closeSavingAndUpdating(resp);
               })
               .catch(err => {
                 if (err) {
                   this.errors.push(err);
-                  this.errorOnSaveInPopup();
+                  this.showErrorModal();
                 }
                 this.inProgress = false;
                 console.log(err)
-              })*/
-          this.closeSavingAndUpdating(null);
+              });
         } else {
           this.updateQuestionData({questionnaire: this.questionnaire})
               .then((resp) => {
@@ -314,7 +331,7 @@ export default {
                 }
                 this.inProgress = false;
                 console.log(err)
-              })
+              });
         }
       } else {
         this.fillUpErrorArray();
