@@ -2,7 +2,7 @@
 
   <div class="p-2">
 
-    <h1 class="mb-5 mt-2 text-center">Kérdőívek</h1>
+    <h1 class="mb-5 mt-2 text-center">Kérdések szerkesztése</h1>
 
     <div class="w-75 mx-auto">
 
@@ -118,17 +118,23 @@
 
         <!--button-->
         <template v-slot:item.actions="{ item }">
-          <v-icon
+          <v-icon v-if="!item.exists_in_surveys"
               @click="loadQuestionnaireData(item)"
               :class="{ 'text-green': true }"
           >
             mdi-pencil
           </v-icon>
-          <v-icon
+          <v-icon v-if="!item.exists_in_surveys"
               @click=""
               :class="{ 'text-red': true }"
           >
             mdi-delete
+          </v-icon>
+          <v-icon v-if="item.exists_in_surveys"
+                  @click=""
+                  :class="{ 'text-red': true }"
+          >
+            mdi-lock
           </v-icon>
         </template>
 

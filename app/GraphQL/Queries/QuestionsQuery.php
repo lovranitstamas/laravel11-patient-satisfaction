@@ -56,7 +56,7 @@ class QuestionsQuery extends Query
     ];
     */
 
-    $totalResults = $query->count();
+    $totalResults = (clone $query)->toBase()->getCountForPagination();
 
     $currentPage = (!empty($args['search']) && $totalResults < ($args['per_page'] ?? 25)) ? 1 : ($args['current_page'] ?? 1);
 

@@ -59,6 +59,7 @@ const state = {
   questionsQueryResponse:
       `
     id,
+    exists_in_surveys,
     question,
     survey {
       id

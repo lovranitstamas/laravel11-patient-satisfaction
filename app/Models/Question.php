@@ -14,6 +14,10 @@ class Question extends Model
     'question'
   ];
 
+  protected $appends = [
+    'exists_in_surveys'
+  ];
+
   /**
    * Relation: Survey of this Question
    *
@@ -26,5 +30,10 @@ class Question extends Model
       'survey_id',
       'id'
     );
+  }
+
+  public function getExistsInSurveysAttribute()
+  {
+    return (int)Response::where('question_id', $this->id)->exists();
   }
 }
