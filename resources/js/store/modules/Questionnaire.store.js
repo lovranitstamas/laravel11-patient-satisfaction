@@ -73,15 +73,15 @@ const state = {
 
 const actions = {
   getQuestionData({commit, rootGetters, dispatch, rootState}, payload = {}) {
-    const {search, orderBy} = payload;
+    const {search, orderBy, surveyId} = payload;
 
     const QUERY_NAME = 'questionsQuery';
     return new Promise(async (resolve, reject) => {
       await axios.post(
           // return Axios.post(
           `${window.domainHttps}/graphql`, {
-            query: `query ${QUERY_NAME} ($per_page:Int, $current_page:Int, $search:String, $orderBy:String){
-          ${QUERY_NAME} (per_page:$per_page,current_page:$current_page,search:$search,orderBy:$orderBy){
+            query: `query ${QUERY_NAME} ($survey_id:Int, $per_page:Int, $current_page:Int, $search:String, $orderBy:String){
+          ${QUERY_NAME} (survey_id:$survey_id, per_page:$per_page,current_page:$current_page,search:$search,orderBy:$orderBy){
              data{
                 ${state.questionsQueryResponse}
              },
@@ -89,6 +89,7 @@ const actions = {
           }
         }`,
             variables: {
+              survey_id: surveyId,
               current_page: rootState.Table.current_page,
               per_page: rootState.Table.per_page,
 

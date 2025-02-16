@@ -29,6 +29,10 @@ class QuestionsQuery extends Query
   {
     return [
       ...PaginationHelper::args(),
+      'survey_id' => [
+        'name' => 'survey_id',
+        'type' => Type::getNullableType(Type::int()),
+      ],
     ];
   }
 
@@ -48,7 +52,15 @@ class QuestionsQuery extends Query
 
     $query = Question::query();
 
-    $query = $query->where(function ($query) use ($args) {
+    $query = $query
+      ->where(function ($query) use ($args) {
+        if (isset($args['survey_id'])) {
+          $query->where('survey_id', $args['survey_id']);
+        }
+        return $query;
+      })
+
+      ->where(function ($query) use ($args) {
       if (isset($args['search'])) {
         $query->where('question', 'LIKE', "%{$args['search']}%");
       }
