@@ -5,16 +5,32 @@ export default {
 </script>
 
 <template>
-  <div class="m-1">
+  <div class="">
 
-    <h1 class="mb-2 mt-1">Kezdőlap</h1>
+    <h1 class="mt-5">Kezdőlap - Admin oldal</h1>
 
-    <div class="mt-3">
+    <div>
+      <RouterLink to="/questionnaire">
+        <button class="btn btn-primary mt-5">
+          Kérdőívek szerkesztése
+        </button>
+      </RouterLink>
+    </div>
+
+    <div>
         <RouterLink to="/questionnaire">
-          <button class="btn btn-primary">
-            Kérdőív
+          <button class="btn btn-primary mt-3">
+            Kérdések szerkesztése
           </button>
         </RouterLink>
+    </div>
+
+    <div>
+      <RouterLink to="/response">
+        <button class="btn btn-primary mt-3">
+          Kitöltött kérdővek
+        </button>
+      </RouterLink>
     </div>
 
   </div>

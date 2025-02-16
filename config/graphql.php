@@ -80,6 +80,7 @@ return [
       'query' => [
         'surveysQuery' => App\GraphQL\Queries\SurveysQuery::class,
         'questionsQuery' => App\GraphQL\Queries\QuestionsQuery::class,
+        'responsesQuery' => App\GraphQL\Queries\ResponsesQuery::class,
       ],
       'mutation' => [
         'storeQuestionMutation' => App\GraphQL\Mutations\StoreQuestionMutation::class,
@@ -90,6 +91,7 @@ return [
       'types' => [
         'SurveyType' => App\GraphQL\Types\SurveyType::class,
         'QuestionType' => App\GraphQL\Types\QuestionType::class,
+        'ResponseType' => App\GraphQL\Types\ResponseType::class,
       ],
 
       // Laravel HTTP middleware
