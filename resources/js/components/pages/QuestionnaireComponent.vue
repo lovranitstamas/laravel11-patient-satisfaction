@@ -121,14 +121,14 @@
         <!--button-->
         <template v-slot:item.actions="{ item }">
           <v-icon v-if="!item.exists_in_surveys"
-              @click="loadQuestionnaireData(item)"
-              :class="{ 'text-green': true }"
+                  @click="loadQuestionnaireData(item)"
+                  :class="{ 'text-green': true }"
           >
             mdi-pencil
           </v-icon>
           <v-icon v-if="!item.exists_in_surveys"
-              @click=""
-              :class="{ 'text-red': true }"
+                  @click=""
+                  :class="{ 'text-red': true }"
           >
             mdi-delete
           </v-icon>
@@ -155,7 +155,8 @@
 <script>
 
 import PaginationFooter from "../Layout/PaginationFooter.vue";
-import {mapActions, mapGetters, mapState} from "vuex";
+import {SET_SNACKBAR} from "../../store/constants";
+import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 
 export default {
   name: "QuestionnaireComponent",
@@ -239,10 +240,11 @@ export default {
   },
 
   methods: {
+    ...mapMutations({setSnackbar: SET_SNACKBAR}),
     ...mapActions("Table", ["setPage"]),
 
     ...mapActions("Survey", ["getSurveyData"]),
-    ...mapActions("Questionnaire", ["getQuestionData", "updateQuestionData"]),
+    ...mapActions("Questionnaire", ["getQuestionData", "storeQuestionData", "updateQuestionData"]),
 
     loadActions() {
       this.getSurveyData();
@@ -269,6 +271,9 @@ export default {
 
     //send or update question
     checkForm: function (newItem) {
+      //close snackbar;
+      this.setSnackbar({ show: false, messages: [] })
+
       let create = !newItem && this.questionnaire.id ? false : true;
 
       if (this.isUpdateMode && !this.isQuestionnaireChanged()) {
@@ -289,19 +294,18 @@ export default {
         this.inProgress = true;
 
         if (create) {
-          /*this.saveEntry({questionnaire: this.questionnaire})
+          this.storeQuestionData({questionnaire: this.questionnaire})
               .then((resp) => {
                 this.closeSavingAndUpdating(resp);
               })
               .catch(err => {
                 if (err) {
                   this.errors.push(err);
-                  this.errorOnSaveInPopup();
+                  this.showErrorModal();
                 }
                 this.inProgress = false;
                 console.log(err)
-              })*/
-          this.closeSavingAndUpdating(null);
+              });
         } else {
           this.updateQuestionData({questionnaire: this.questionnaire})
               .then((resp) => {
@@ -314,7 +318,7 @@ export default {
                 }
                 this.inProgress = false;
                 console.log(err)
-              })
+              });
         }
       } else {
         this.fillUpErrorArray();

@@ -5,7 +5,8 @@ export const TYPES = {
     loadQuestionData: "loadQuestionData"
   },
   mutations: {
-    setQuestion: "setQuestion",
+    getQuestions: "getQuestions",
+    storeQuestion: "storeQuestion",
     updateQuestion: "updateQuestion",
   },
 };
@@ -112,7 +113,7 @@ const actions = {
             return r.data.data[QUERY_NAME];
           })
           .then(res => {
-            commit(TYPES.mutations.setQuestion, res['data']);
+            commit(TYPES.mutations.getQuestions, res['data']);
             // set footer
             dispatch(
                 "Table/rowsLoaded",
@@ -124,6 +125,58 @@ const actions = {
             resolve();
           }).catch((err) => {
             // return Promise.reject(err);
+            reject(err);
+          });
+    })
+  },
+  storeQuestionData({commit, rootGetters, dispatch, rootState}, {questionnaire}) {
+
+    const surveyId = questionnaire.survey_id;
+    const question = questionnaire.question;
+
+    const MUTATION_NAME = 'storeQuestionMutation';
+    return new Promise(async (resolve, reject) => {
+      await axios.post(
+          `${window.domainHttps}/graphql`, {
+            query:
+                `mutation ${MUTATION_NAME}(
+                    $survey_id:Int!,
+                    $question:String!
+                 ) {
+                      ${MUTATION_NAME}(
+                        survey_id:$survey_id,
+                        question:$question
+                      ) {
+                        ${state.questionsQueryResponse}
+                      }
+                    }                           
+                `,
+            variables: {
+              survey_id: surveyId,
+              question: question,
+            },
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then(r => {
+            if (r.data.errors) {
+              if (r.data.errors[0]?.extensions?.debugMessage) {
+                return Promise.reject(new Error(r.data.errors[0].extensions.debugMessage));
+              } else {
+                const errorMessage = r.data.errors[0].message || 'An unknown error occurred.';
+                return Promise.reject(new Error(errorMessage));
+              }
+            }
+
+            return r.data.data[MUTATION_NAME];
+          })
+          .then(res => {
+            commit(TYPES.mutations.storeQuestion, res);
+            resolve();
+          }).catch((err) => {
             reject(err);
           });
     })
@@ -187,7 +240,7 @@ const actions = {
 };
 
 const mutations = {
-  [TYPES.mutations.setQuestion](state, payload) {
+  [TYPES.mutations.getQuestions](state, payload) {
     state.questions = payload;
 
     if (state.questionsInitStateLength === 0) {
@@ -195,6 +248,9 @@ const mutations = {
         return e;
       }).length;
     }
+  },
+  [TYPES.mutations.storeQuestion](state, payload) {
+    state.questions.unshift(payload)
   },
   [TYPES.mutations.updateQuestion](state, payload) {
     state.questions.map(entry => {
