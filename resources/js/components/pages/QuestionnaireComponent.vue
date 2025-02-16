@@ -317,6 +317,9 @@ export default {
           this.storeQuestionData({questionnaire: this.questionnaire})
               .then((resp) => {
                 this.closeSavingAndUpdating(resp);
+
+                this.setPage(1);
+                this.getQuestionData();
               })
               .catch(err => {
                 if (err) {
