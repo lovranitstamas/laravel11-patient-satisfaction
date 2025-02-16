@@ -14,7 +14,7 @@ class Survey extends Model
     'name',
   ];
 
-  public function getExistsInQuestionsAttribute()
+  public function getExistsInResponsesAttribute()
   {
     $questions = $this->questions;
 
