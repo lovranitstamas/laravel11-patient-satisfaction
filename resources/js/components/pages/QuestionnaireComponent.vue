@@ -135,6 +135,7 @@
           <v-icon v-if="item.exists_in_surveys"
                   @click=""
                   :class="{ 'text-red': true }"
+                  size="x-large"
           >
             mdi-lock
           </v-icon>
