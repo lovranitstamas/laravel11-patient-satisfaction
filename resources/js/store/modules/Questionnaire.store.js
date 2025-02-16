@@ -86,7 +86,7 @@ const actions = {
           }
         }`,
             variables: {
-              current_page: search ? 1 : rootState.Table.current_page,
+              current_page: rootState.Table.current_page,
               per_page: rootState.Table.per_page,
 
               search: search,
