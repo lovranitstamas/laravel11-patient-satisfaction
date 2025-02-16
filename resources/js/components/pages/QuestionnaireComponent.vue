@@ -69,6 +69,8 @@
 
       </form>
 
+      <h3 class="my-5 text-center">Kérdések listája</h3>
+
       <!-- search bar -->
       <v-row v-if="questionCollectionInitStateLength > 0">
         <v-col cols="12">
