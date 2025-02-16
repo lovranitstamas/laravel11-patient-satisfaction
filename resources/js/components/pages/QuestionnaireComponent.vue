@@ -6,6 +6,33 @@
 
     <div class="w-75 mx-auto">
 
+      <form
+          id="app"
+          ref="form"
+      >
+
+        <div v-if="pageLoad || (!pageLoad && !isBaseDataLoaded)" class="text-center alert alert-info fw-bold">
+          {{ message }}
+        </div>
+
+        <div class="row">
+          <div class="col-12 col-md-4">
+            <v-select
+                v-model="selectedSurvey"
+                :items="surveyCollection"
+                item-title="name"
+                item-value="id"
+                label="Kérdőív"
+                :readonly="pageLoad"
+            ></v-select>
+          </div>
+          <div class="col-12 col-md-8">
+            <v-text-field ref="question" label="Kérem adja meg a kérdést"></v-text-field>
+          </div>
+        </div>
+
+      </form>
+
       <!-- search bar -->
       <v-row v-if="questionCollectionInitStateLength > 0">
         <v-col cols="12">
@@ -18,6 +45,7 @@
         </v-col>
       </v-row>
 
+      <!-- table -->
       <v-data-table
           v-if="questionCollection.length"
           :headers="!isMobile ? headers : mobileHeaders"
@@ -91,8 +119,24 @@ export default {
 
   data() {
     return {
+      message: 'Oldal töltődik',
+      pageLoad: true,
+      questionCollectionLoaded: false,
+
       search: null,
+      selectedSurvey: null,
       isMobile: window.innerWidth <= 768,
+
+      questionnaire: {
+        id: '',
+        survey_id: '',
+        question: '',
+      },
+      storedQuestionnaire: {
+        id: '',
+        survey_id: '',
+        question: '',
+      }
     }
   },
 
@@ -101,7 +145,11 @@ export default {
   },
 
   computed: {
-    ...mapState({}),
+    ...mapState({
+      isBaseDataLoaded() {
+        return this.questionCollectionLoaded;
+      },
+    }),
     ...mapGetters('Survey', ["surveyCollection"]),
     ...mapGetters('Questionnaire', ["headers", "mobileHeaders", "questionCollection", "questionCollectionInitStateLength"])
   },
@@ -114,6 +162,30 @@ export default {
     this.$nextTick(() => {
       this.init();
     });
+  },
+
+  watch: {
+    questionCollection: {
+      deep: true,
+      handler: function (newValue, oldValue) {
+        console.log('questionCollection változott:', oldValue, '->', newValue)
+
+        if (!this.questionCollection || !this.questionCollection.length) {
+          this.message = "Adatbázis üres. Kérem töltsön fel legalább egy kérdőívet, majd a hozzá tartozó kérdéseket.";
+          this.questionCollectionLoaded = false;
+        } else {
+          this.questionCollectionLoaded = true;
+        }
+      }
+    },
+    isBaseDataLoaded(newValue) {
+      if (newValue) {
+        this.message = '';
+
+        this.pageLoad = false;
+        this.emptyDatabase = false;
+      }
+    },
   },
 
   methods: {
@@ -130,11 +202,11 @@ export default {
     init() {
     },
 
+    // --------- pagination ---------
     handleResize() {
       this.isMobile = window.innerWidth <= 768;
     },
 
-    // --------- pagination --------- LT
     fetchData() {
       this.getQuestionData({search: this.search});
     },
