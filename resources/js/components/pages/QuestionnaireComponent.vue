@@ -412,6 +412,10 @@ export default {
             this.deletingSuccessful = true;
             this.inProgress = false;
 
+            //load first page
+            this.setPage(1);
+            this.getQuestionData();
+
             setTimeout(() => this.deletingSuccessful = false, 5000);
           })
           .catch(err => {
