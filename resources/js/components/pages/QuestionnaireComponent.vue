@@ -11,7 +11,7 @@
           ref="form"
       >
 
-        <div v-if="pageLoad || (!pageLoad && !isBaseDataLoaded)" class="text-center alert alert-info fw-bold">
+        <div v-if="(pageLoad || (!pageLoad && !isBaseDataLoaded)) && !search" class="text-center alert alert-info fw-bold">
           {{ message }}
         </div>
 
@@ -113,6 +113,11 @@
           :loading="$root.isLoading"
       >
 
+        <!-- HTML megjelenítése az id_response oszlopban -->
+        <template v-slot:item.id_question="{ item }">
+          <span v-html="item.id_question"></span>
+        </template>
+
         <!-- header -->
         <template v-slot:headers="{ headers }" v-if="isMobile">
           <tr>
@@ -174,6 +179,14 @@
         </template>
 
       </v-data-table>
+
+      <div style="margin-top: 70px">
+        <RouterLink to="/">
+          <button class="btn btn-primary">
+            Kezdőlap
+          </button>
+        </RouterLink>
+      </div>
 
     </div>
 
