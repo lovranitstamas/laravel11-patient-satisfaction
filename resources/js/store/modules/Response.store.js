@@ -98,7 +98,7 @@ const actions = {
     const submitter_name = userResponses.submitter_name || null;
     const email = userResponses.email || null;
 
-    console.log(userResponses.answers);
+    const answersArray = Object.entries(userResponses.answers).map(([question_id, response]) => [question_id, response]);
 
     const MUTATION_NAME = 'storeResponseMutation';
 
@@ -108,11 +108,13 @@ const actions = {
             query:
                 `mutation ${MUTATION_NAME}(
                     $submitter_name:String,
-                    $email:String
+                    $email:String,
+                    $answers: [[String]]  
                  ) {
                       ${MUTATION_NAME}(
                         submitter_name:$submitter_name,
-                        email:$email
+                        email:$email,
+                         answers: $answers 
                       ) {
                         ${state.userResponses}
                       }
@@ -121,6 +123,7 @@ const actions = {
             variables: {
               submitter_name: submitter_name,
               email: email,
+              answers: answersArray
             },
           },
           {

@@ -36,6 +36,10 @@ class StoreResponseMutation extends Mutation
         'name' => 'email',
         'type' => Type::getNullableType(Type::string()),
       ],
+      'answers' => [
+        'name' => 'answers',
+        'type' => Type::listOf(Type::listOf(Type::string())),
+      ],
     ];
   }
 
@@ -86,9 +90,27 @@ class StoreResponseMutation extends Mutation
   private function storeResponseData(array $args): Response
   {
 
-    $args['question_id'] = 8;
-    $args['response'] = 'demo answer válasz';
+    $createdResponse = null;
 
-    return Response::create($args);
+    $answers = $args['answers'];
+
+    foreach ($answers as $answer) {
+
+      $question_id = (int)$answer[0];
+      $response = $answer[1];
+
+      $args['question_id'] = $question_id;
+      $args['response'] = $response;
+
+      $item = Response::create($args);
+
+      if (!$createdResponse) {
+        $createdResponse = $item;
+      }
+
+    }
+
+    return $createdResponse;
+
   }
 }
