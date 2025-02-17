@@ -48,7 +48,7 @@
         </b-modal>
 
         <div class="row">
-          <div class="col-12 col-md-6 mx-auto">
+          <div class="col-12 col-md-6 mx-auto text-center">
             <button
                 type="button"
                 @click.prevent="checkForm(!isUpdateMode)"

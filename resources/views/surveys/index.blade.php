@@ -2,6 +2,6 @@
 
 @section("title", "Kérdőívek szerkesztése")
 
-@section("content")l
-    <blade-survey></blade-survey>
+@section("content")
+  <blade-survey-wrapper></blade-survey-wrapper>
 @endsection
