@@ -14,6 +14,10 @@ class Survey extends Model
     'name',
   ];
 
+  protected $appends = [
+    'exists_in_responses'
+  ];
+
   public function getExistsInResponsesAttribute()
   {
     $questions = $this->questions;
