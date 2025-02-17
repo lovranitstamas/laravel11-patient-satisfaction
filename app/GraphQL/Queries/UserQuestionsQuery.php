@@ -44,9 +44,7 @@ class UserQuestionsQuery extends Query
     ];
     */
 
-    $surveyId = Survey::whereHas('questions')
-      ->inRandomOrder()
-      ->value('id');
+    $surveyId = 1;
 
     $questionsQuery = Question::where('survey_id', $surveyId)->inRandomOrder();
 

@@ -15,11 +15,32 @@
           {{ message }}
         </div>
 
+        <div class="row">
+          <div class="col-12 col-md-8 mx-auto">
+            <v-text-field
+                label="Kérem adja meg a nevét (opcionális)"
+                v-model="submitter_name">
+            </v-text-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 col-md-8 mx-auto">
+            <v-text-field
+                label="Kérem adja meg az e-mail címét (opcionális)"
+                v-model="email">
+            </v-text-field>
+          </div>
+        </div>
+
         <div v-for="userQuestion in userQuestionCollection">
           <div class="row">
             <div class="col-12 col-md-8 mx-auto">
-              <p class="fw-bold">{{userQuestion.question}}</p>
-              <v-text-field label="Kérem adjon választ a kérdésre"></v-text-field>
+              <p class="fw-bold">{{ userQuestion.question }}</p>
+              <v-text-field
+                  label="Kérem adjon választ a kérdésre"
+                  v-model="answers[userQuestion.id]">
+              </v-text-field>
             </div>
           </div>
         </div>
@@ -32,7 +53,7 @@
         <!-- modals -->
         <b-modal ref="b-modal-form-error" ok-only centered title="Hiba" @ok="closeErrorModal()">
           <ul class="my-4" v-if="errors.length">
-            <li v-for="error in errors">{{ error }}</li>
+            <li v-for="error in errors"><span v-html="error"></span></li>
           </ul>
         </b-modal>
 
@@ -41,7 +62,7 @@
             <button
                 type="button"
                 @click.prevent="checkForm()"
-                class="btn btn-lg text-white"
+                class="btn btn-lg btn-primary text-white"
                 :disabled="inProgress || emptyDatabase"
             >Válaszok elküldése
             </button>
@@ -71,7 +92,10 @@ export default {
       inProgress: false,
       savingSuccessful: false,
 
-      errors: []
+      submitter_name: '',
+      email: '',
+      errors: [],
+      answers: {}
     }
   },
 
@@ -154,10 +178,36 @@ export default {
     },
 
     isInputsValid() {
+      if (this.email && !this.isValidEmail(this.email)) {
+        return false;
+      }
+
+      for (let question of this.userQuestionCollection) {
+        if (!this.answers[question.id] || this.answers[question.id] === '') {
+          return false;
+        }
+      }
+      return true;
+    },
+
+    isValidEmail(email) {
+      // E-mail validálás regex segítségével
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return emailRegex.test(email);
     },
 
     // --------- error modals ---------
     fillUpErrorArray() {
+      if (this.email && !this.isValidEmail(this.email)) {
+        this.errors.push('E-mail cím formátum nem megfelelő');
+      }
+
+      for (let question of this.userQuestionCollection) {
+        if (!this.answers[question.id] || this.answers[question.id] === '') {
+          this.errors.push(`"<strong>${question.question}</strong>" - kérdés nem válaszolt.`);
+        }
+      }
+
       this.showErrorModal();
     },
 
