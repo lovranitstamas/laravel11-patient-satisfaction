@@ -16,12 +16,11 @@ class DatabaseSeeder extends Seeder
   {
     // User::factory(10)->create();
 
-    /*
     User::factory()->create([
-      'name' => 'Test User',
-      'email' => 'test@example.com',
+      'name' => 'Test Admin',
+      'email' => 'admin@admin.com',
+      'password' => bcrypt('password123'),
     ]);
-    */
 
     $this->call(SurveyTableSeeder::class);
     $this->call(QuestionTableSeeder::class);

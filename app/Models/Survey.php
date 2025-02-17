@@ -24,7 +24,7 @@ class Survey extends Model
 
     $existsInResponses = Response::whereIn('question_id', $questions->pluck('id'))->exists();
 
-    return (int)!$existsInResponses;
+    return (int)$existsInResponses;
   }
 
   public function questions(): HasMany

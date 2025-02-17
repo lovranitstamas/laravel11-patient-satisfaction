@@ -14,5 +14,9 @@
 <div id="app">
   <app></app>
 </div>
+
+<script>
+  window.bladeMode = @json(0);
+</script>
 </body>
 </html>

@@ -15,7 +15,8 @@ window.Vue = require('vue').default;
 import {createApp} from 'vue';
 import App from './App.vue';
 
-const app = createApp(App);
+//const app = createApp(App);
+let app = store.state.blade === 1 ? createApp() : createApp(App);
 
 // ! ==== BOOTSTRAP ==== ! //
 import {createBootstrap} from 'bootstrap-vue-next';
@@ -40,7 +41,14 @@ const files = require.context("./", true, /\.vue$/i);
 files.keys().map(key => {
   const componentConfig = files(key);
   const componentName = key.split('/').pop().split('.')[0];
-  app.component(componentName, componentConfig.default || componentConfig);
+
+  if (store.state.blade === 0) {
+    app.component(componentName, componentConfig.default || componentConfig);
+  } else {
+    if (componentName !== 'App') {
+      app.component(componentName, componentConfig.default || componentConfig);
+    }
+  }
 });
 // ! ==== END OF VUE COMPONENTS ==== ! //
 
