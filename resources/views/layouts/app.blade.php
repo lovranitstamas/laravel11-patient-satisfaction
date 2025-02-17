@@ -6,17 +6,24 @@
 
   <title> Beteg elégedettségi kérdőív</title>
 
-  <script src="{{ asset('js/app.js') }}" defer></script>
-  <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+  <script src="{{ mix('js/app.js') }}" defer></script>
+  <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 
 </head>
 <body>
+
 <div id="app">
-  <app></app>
+  <!-- vuetify -->
+  <v-app>
+    <v-main>
+      @yield('content')
+    </v-main>
+  </v-app>
 </div>
 
 <script>
-  window.bladeMode = @json(0);
+  window.bladeMode = @json(1);
 </script>
+
 </body>
 </html>

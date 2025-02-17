@@ -11,7 +11,7 @@ export default createStore({
       messages: [],
       color: "red",
     },
-    blade: 0,
+    blade: window.bladeMode && window.bladeMode === 1 ? 1 : 0,
   },
   mutations: {
     [SET_SNACKBAR](
