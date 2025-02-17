@@ -8,10 +8,20 @@
       <form
           id="app"
           ref="form"
+          class="pt-5"
       >
 
         <div v-if="pageLoad || (!pageLoad && !isBaseDataLoaded)" class="text-center alert alert-info fw-bold">
           {{ message }}
+        </div>
+
+        <div v-for="userQuestion in userQuestionCollection">
+          <div class="row">
+            <div class="col-12 col-md-8 mx-auto">
+              <p class="fw-bold">{{userQuestion.question}}</p>
+              <v-text-field label="Kérem adjon választ a kérdésre"></v-text-field>
+            </div>
+          </div>
         </div>
 
         <!-- messages -->

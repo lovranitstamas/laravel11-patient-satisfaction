@@ -94,7 +94,6 @@ const actions = {
           })
           .then(r => r.data.data[QUERY_NAME])
           .then(r => {
-            console.log(r);
             commit(TYPES.mutations.getUserQuestions, r);
             resolve();
           }).catch((err) => {
