@@ -12,7 +12,7 @@
 
       <div>
         <a href='/questionnaires' class="btn btn-primary mt-5">
-          Kérdőívek szerkesztése
+          Kérdések szerkesztése
         </a>
       </div>
 
