@@ -1,15 +1,23 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DefaultController;
 use App\Http\Controllers\SpaController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 $bRenderMode = (int)config('app.blade_render_mode');
 if ($bRenderMode == 1) {
-  Route::get('/dashboard', DefaultController::class);
-  Route::get('/surveys', DefaultController::class);
-  Route::get('/questionnaires', DefaultController::class);
-  Route::get('/responses', DefaultController::class);
+  Route::get('/', [AdminController::class, 'index']);
+
+  Auth::routes();
+  Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+  Route::group(['middleware' => ['auth']], function () {
+    Route::get('/surveys', DefaultController::class);
+    Route::get('/questionnaires', DefaultController::class);
+    Route::get('/responses', DefaultController::class);
+  });
 } else {
 //Vue router
   Route::get('/{any}', [SpaController::class, 'index'])
