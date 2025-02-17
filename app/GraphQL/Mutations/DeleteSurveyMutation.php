@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Question;
+use App\Models\Survey;
 use Closure;
 use GraphQL\Error\Error;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -13,16 +13,16 @@ use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Mutation;
 use Rebing\GraphQL\Support\SelectFields;
 
-class DeleteQuestionMutation extends Mutation
+class DeleteSurveyMutation extends Mutation
 {
   protected $attributes = [
-    'name' => 'deleteQuestionMutation',
+    'name' => 'deleteSurveyMutation',
     'description' => 'A mutation'
   ];
 
   public function type(): Type
   {
-    return GraphQL::type('QuestionType');
+    return GraphQL::type('SurveyType');
   }
 
   public function args(): array
@@ -45,13 +45,13 @@ class DeleteQuestionMutation extends Mutation
     return [];
     */
 
-    $questionnaire = Question::findOrFail($args['id']);
+    $survey = Survey::findOrFail($args['id']);
 
-    $deleted = $questionnaire->delete();
+    $deleted = $survey->delete();
 
     throw_if(!$deleted,
-      new Error('A kérdés törlése nem sikerült'));
+      new Error('A kérdőív törlése nem sikerült'));
 
-    return $questionnaire->load(['survey']);
+    return $survey;
   }
 }

@@ -1,8 +1,7 @@
 <template>
-
   <div class="p-2">
 
-    <h1 class="mb-5 mt-2 text-center">Kérdések szerkesztése</h1>
+    <h1 class="mb-5 mt-2 text-center">Kérdőív szerkesztése</h1>
 
     <div class="w-75 mx-auto">
 
@@ -16,20 +15,11 @@
         </div>
 
         <div class="row">
-          <div class="col-12 col-md-4">
-            <v-select
-                :disabled="pageLoad || isUpdateMode"
-                ref="survey_id"
-                v-model="questionnaire.survey_id"
-                :items="surveyCollection"
-                item-title="name"
-                item-value="id"
-                label="Kérdőív"
-            ></v-select>
-          </div>
-          <div class="col-12 col-md-8">
-            <v-text-field ref="question" label="Kérem adja meg a kérdést"
-                          v-model="questionnaire.question"></v-text-field>
+          <div class="col-12 col-md-8 mx-auto">
+            <v-text-field ref="question" label="Kérem adja meg a kérdőív nevét"
+                          v-model="survey.name">
+
+            </v-text-field>
           </div>
         </div>
 
@@ -66,33 +56,22 @@
                 class="btn btn-lg text-white"
                 :class="{'btn-success': isUpdateMode, 'btn-primary': !isUpdateMode}"
                 :disabled="inProgress || emptyDatabase"
-            ><!--Tovább-->{{ isUpdateMode ? 'Kérdés módosítása' : 'Új kérdés felvitele' }}
+            ><!--Tovább-->{{ isUpdateMode ? 'Kérdőív módosítása' : 'Új kérdőív felvitele' }}
             </button>
           </div>
         </div>
 
       </form>
 
-      <h3 class="my-5 text-center">Kérdések listája</h3>
-
-      <!-- select listed survey -->
-      <v-select
-          :disabled="pageLoad || isUpdateMode"
-          v-model="selectedSurvey"
-          :items="surveyCollection"
-          item-title="name"
-          item-value="id"
-          label="Kérdőív kiválasztása"
-          @update:modelValue="handleSurveyChange"
-      ></v-select>
+      <h3 class="my-5 text-center">Kérdőívek listája</h3>
 
       <!-- search bar -->
-      <v-row v-if="questionCollectionInitStateLength > 0">
+      <v-row v-if="surveyCollectionBasedOnPaginationInitStateLength > 0">
         <v-col cols="12">
           <v-text-field
               v-model="search"
               class="my-4"
-              label="Keresés kérdés alapján"
+              label="Keresés kérdőív neve alapján"
               v-debounce:300ms="fetchData"
           ></v-text-field>
         </v-col>
@@ -104,9 +83,9 @@
 
       <!-- table -->
       <v-data-table
-          v-if="questionCollection.length"
+          v-if="surveyCollectionBasedOnPagination.length"
           :headers="!isMobile ? headers : mobileHeaders"
-          :items="questionCollection"
+          :items="surveyCollectionBasedOnPagination"
           :loading-text="'Loading...'"
           disable-pagination
           hide-default-footer
@@ -114,8 +93,8 @@
       >
 
         <!-- HTML megjelenítése az id_response oszlopban -->
-        <template v-slot:item.id_question="{ item }">
-          <span v-html="item.id_question"></span>
+        <template v-slot:item.id_name="{ item }">
+          <span v-html="item.id_name"></span>
         </template>
 
         <!-- header -->
@@ -134,7 +113,7 @@
             <span v-html="item.id_question" class="d-block ms-5"></span>
             <v-icon
                 v-if="!item.exists_in_responses"
-                @click="loadQuestionnaireData(item)"
+                @click="loadSurveyData(item)"
                 :class="{ 'text-green': true }"
                 class="mx-2 p-0"
             >
@@ -153,7 +132,7 @@
         <!--button-->
         <template v-slot:item.actions="{ item }">
           <v-icon v-if="!item.exists_in_responses"
-                  @click="loadQuestionnaireData(item)"
+                  @click="loadSurveyData(item)"
                   :class="{ 'text-green': true }"
           >
             mdi-pencil
@@ -165,7 +144,6 @@
             mdi-delete
           </v-icon>
           <v-icon v-if="item.exists_in_responses"
-                  @click=""
                   :class="{ 'text-red': true }"
                   size="x-large"
           >
@@ -188,26 +166,27 @@
         </RouterLink>
       </div>
 
+
     </div>
 
   </div>
 </template>
 
 <script>
-
 import PaginationFooter from "../Layout/PaginationFooter.vue";
 import {SET_SNACKBAR} from "../../store/constants";
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
 
 export default {
-  name: "QuestionnaireComponent",
+  name: "SurveyComponent",
+
   components: {PaginationFooter},
 
   data() {
     return {
       message: 'Oldal töltődik',
       pageLoad: true,
-      questionCollectionLoaded: false,
+      surveyCollectionLoaded: false,
       emptyDatabase: true,
 
       changedNothing: false,
@@ -217,18 +196,15 @@ export default {
       deletingSuccessful: false,
 
       search: null,
-      selectedSurveyId: null,
       isMobile: window.innerWidth <= 768,
 
-      questionnaire: {
+      survey: {
         id: '',
-        survey_id: '',
-        question: '',
+        name: '',
       },
-      storedQuestionnaire: {
+      storedSurvey: {
         id: '',
-        survey_id: '',
-        question: '',
+        name: '',
       },
       errors: []
     }
@@ -241,11 +217,10 @@ export default {
   computed: {
     ...mapState({
       isBaseDataLoaded() {
-        return this.questionCollectionLoaded;
+        return this.surveyCollectionLoaded;
       },
     }),
-    ...mapGetters('Survey', ["surveyCollection"]),
-    ...mapGetters('Questionnaire', ["headers", "mobileHeaders", "questionCollection", "questionCollectionInitStateLength"])
+    ...mapGetters('Survey', ["headers", "mobileHeaders", "surveyCollectionBasedOnPagination", "surveyCollectionBasedOnPaginationInitStateLength"])
   },
 
   mounted: function () {
@@ -259,16 +234,16 @@ export default {
   },
 
   watch: {
-    questionCollection: {
+    surveyCollectionBasedOnPagination: {
       deep: true,
       handler: function (newValue, oldValue) {
-        console.log('questionCollection változott:', oldValue, '->', newValue)
+        console.log('surveyCollectionBasedOnPagination változott:', oldValue, '->', newValue)
 
-        if (!this.questionCollection || !this.questionCollection.length) {
-          this.message = "Adatbázis üres. Kérem töltsön fel legalább egy kérdőívet, majd a hozzá tartozó kérdéseket.";
-          this.questionCollectionLoaded = false;
+        if (!this.surveyCollectionBasedOnPagination || !this.surveyCollectionBasedOnPagination.length) {
+          this.message = "Adatbázis üres. Kérem töltsön fel legalább egy kérdőívet.";
+          this.surveyCollectionLoaded = false;
         } else {
-          this.questionCollectionLoaded = true;
+          this.surveyCollectionLoaded = true;
         }
       }
     },
@@ -286,21 +261,19 @@ export default {
     ...mapMutations({setSnackbar: SET_SNACKBAR}),
     ...mapActions("Table", ["setPage"]),
 
-    ...mapActions("Survey", ["getSurveyData"]),
-    ...mapActions("Questionnaire", ["getQuestionData", "storeQuestionData", "updateQuestionData", "deleteQuestion"]),
+    ...mapActions("Survey", ["getSurveyDataBasedOnPagination", "storeSurveyData", "updateSurveyData", "deleteSurvey"]),
 
     loadActions() {
-      this.getSurveyData();
-      this.getQuestionData();
+      this.getSurveyDataBasedOnPagination();
     },
 
     init() {
     },
 
     //load data
-    loadQuestionnaireData(questionnaireEntry) {
-      this.fillQuestionnaire(this.questionnaire, questionnaireEntry);
-      this.fillQuestionnaire(this.storedQuestionnaire, questionnaireEntry);
+    loadSurveyData(surveyEntry) {
+      this.fillSurvey(this.survey, surveyEntry);
+      this.fillSurvey(this.storedSurvey, surveyEntry);
 
       this.isUpdateMode = true;
 
@@ -308,20 +281,18 @@ export default {
 
     },
 
-    fillQuestionnaire(questionnaire, storedQuestionnaire) {
-      questionnaire.id = storedQuestionnaire.id;
-      questionnaire.survey_id = storedQuestionnaire.survey.id;
-      questionnaire.question = storedQuestionnaire.question;
+    fillSurvey(survey, storedSurvey) {
+      survey.id = storedSurvey.id;
+      survey.name = storedSurvey.name;
     },
 
-    //send or update question
     checkForm: function (newItem) {
       //close snackbar;
       this.setSnackbar({show: false, messages: []})
 
-      let create = !newItem && this.questionnaire.id ? false : true;
+      let create = !newItem && this.survey.id ? false : true;
 
-      if (this.isUpdateMode && !this.isQuestionnaireChanged()) {
+      if (this.isUpdateMode && !this.isSurveyChanged()) {
 
         this.changedNothing = true;
         setTimeout(() => {
@@ -339,12 +310,12 @@ export default {
         this.inProgress = true;
 
         if (create) {
-          this.storeQuestionData({questionnaire: this.questionnaire})
+          this.storeSurveyData({survey: this.survey})
               .then((resp) => {
                 this.closeSavingAndUpdating(resp);
 
                 this.setPage(1);
-                this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
+                this.getSurveyDataBasedOnPagination({search: this.search});
               })
               .catch(err => {
                 if (err) {
@@ -355,7 +326,7 @@ export default {
                 console.log(err)
               });
         } else {
-          this.updateQuestionData({questionnaire: this.questionnaire})
+          this.updateSurveyData({survey: this.survey})
               .then((resp) => {
                 this.closeSavingAndUpdating(resp);
               })
@@ -375,9 +346,9 @@ export default {
     },
 
     // validations
-    isQuestionnaireChanged() {
-      for (let key in this.questionnaire) {
-        if (this.questionnaire[key] !== this.storedQuestionnaire[key]) {
+    isSurveyChanged() {
+      for (let key in this.survey) {
+        if (this.survey[key] !== this.storedSurvey[key]) {
           return true;
         }
       }
@@ -385,7 +356,7 @@ export default {
     },
 
     isInputsValid() {
-      return !!(this.questionnaire.survey_id && this.questionnaire.question);
+      return !!(this.survey.name);
     },
 
     // not changes and re-init form
@@ -397,12 +368,12 @@ export default {
     },
 
     setNullInputs() {
-      this.clearQuestionnaire(this.questionnaire);
-      this.clearQuestionnaire(this.storedQuestionnaire);
+      this.clearSurvey(this.survey);
+      this.clearSurvey(this.storedSurvey);
     },
 
-    clearQuestionnaire(inventory) {
-      inventory.survey_id = inventory.question = '';
+    clearSurvey(survey) {
+      survey.name = '';
     },
 
     closeSavingAndUpdating(resp) {
@@ -431,18 +402,18 @@ export default {
       return true;
     },
 
-    callDeleteFunction(questionnaire) {
+    callDeleteFunction(survey) {
       this.inProgress = true;
       this.errors = [];
 
-      this.deleteQuestion({questionnaire: questionnaire})
+      this.deleteSurvey({survey: survey})
           .then(() => {
             this.deletingSuccessful = true;
             this.inProgress = false;
 
             //load first page
             this.setPage(1);
-            this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
+            this.getSurveyDataBasedOnPagination({search: this.search});
 
             setTimeout(() => this.deletingSuccessful = false, 5000);
           })
@@ -458,12 +429,8 @@ export default {
 
     // --------- error modals ---------
     fillUpErrorArray() {
-      if (!this.questionnaire.survey_id) {
-        this.errors.push('Kérdőív kiválasztása kötelező.');
-      }
-
-      if (!this.questionnaire.question) {
-        this.errors.push('Kérdés megadása kötelező');
+      if (!this.survey.name) {
+        this.errors.push('Kérdőív nevének megadása kötelező.');
       }
 
       this.showErrorModal();
@@ -483,7 +450,7 @@ export default {
     handleSurveyChange(selectedValue) {
       this.selectedSurveyId = selectedValue;
 
-      this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
+      this.getSurveyDataBasedOnPagination({search: this.search});
     },
 
     // --------- pagination ---------
@@ -492,15 +459,14 @@ export default {
     },
 
     fetchData() {
-      this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
+      this.getSurveyDataBasedOnPagination({search: this.search});
     },
 
     setCurrentPage(e) {
       this.setPage(e);
-      this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
+      this.getSurveyDataBasedOnPagination({search: this.search});
     },
   }
-
 }
 </script>
 

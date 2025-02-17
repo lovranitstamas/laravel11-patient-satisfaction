@@ -44,7 +44,7 @@ class QuestionType extends GraphQLType
         'type' => Type::nonNull(Type::string()),
         'description' => 'created_at',
       ],
-      'exists_in_surveys' => [
+      'exists_in_responses' => [
         'type' => Type::getNullableType(Type::int()),
         'description' => '',
       ],

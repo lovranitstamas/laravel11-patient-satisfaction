@@ -79,10 +79,14 @@ return [
     'default' => [
       'query' => [
         'surveysQuery' => App\GraphQL\Queries\SurveysQuery::class,
+        'surveysBasedOnPaginationQuery' => App\GraphQL\Queries\SurveysBasedOnPaginationQuery::class,
         'questionsQuery' => App\GraphQL\Queries\QuestionsQuery::class,
         'responsesQuery' => App\GraphQL\Queries\ResponsesQuery::class,
       ],
       'mutation' => [
+        'storeSurveyMutation' => App\GraphQL\Mutations\StoreSurveyMutation::class,
+        'updateSurveyMutation' => App\GraphQL\Mutations\UpdateSurveyMutation::class,
+        'deleteSurveyMutation' => App\GraphQL\Mutations\DeleteSurveyMutation::class,
         'storeQuestionMutation' => App\GraphQL\Mutations\StoreQuestionMutation::class,
         'updateQuestionMutation' => App\GraphQL\Mutations\UpdateQuestionMutation::class,
         'deleteQuestionMutation' => App\GraphQL\Mutations\DeleteQuestionMutation::class,

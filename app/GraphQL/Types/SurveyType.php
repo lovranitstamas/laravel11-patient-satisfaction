@@ -27,6 +27,10 @@ class SurveyType extends GraphQLType
         'type' => Type::nonNull(Type::string()),
         'description' => 'The name is a string',
       ],
+      'exists_in_responses' => [
+        'type' => Type::getNullableType(Type::int()),
+        'description' => '',
+      ],
     ];
   }
 }

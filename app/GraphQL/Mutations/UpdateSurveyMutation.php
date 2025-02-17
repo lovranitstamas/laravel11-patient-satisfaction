@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Mutations;
 
-use App\Models\Question;
+use App\Models\Survey;
 use Closure;
 use GraphQL\Error\Error;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -13,16 +13,16 @@ use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Mutation;
 use Rebing\GraphQL\Support\SelectFields;
 
-class DeleteQuestionMutation extends Mutation
+class UpdateSurveyMutation extends Mutation
 {
   protected $attributes = [
-    'name' => 'deleteQuestionMutation',
+    'name' => 'updateSurveyMutation',
     'description' => 'A mutation'
   ];
 
   public function type(): Type
   {
-    return GraphQL::type('QuestionType');
+    return GraphQL::type('SurveyType');
   }
 
   public function args(): array
@@ -31,6 +31,11 @@ class DeleteQuestionMutation extends Mutation
       'id' => [
         'name' => 'id',
         'type' => Type::nonNull(Type::int()),
+      ],
+      'name' => [
+        'name' => 'name',
+        'type' => Type::nonNull(Type::string()),
+        'rules' => ['required'],
       ],
     ];
   }
@@ -45,13 +50,17 @@ class DeleteQuestionMutation extends Mutation
     return [];
     */
 
-    $questionnaire = Question::findOrFail($args['id']);
+    $survey = Survey::findOrFail($args['id']);
 
-    $deleted = $questionnaire->delete();
+    throw_if(!$this->updateSurveyByArgs($survey, $args),
+      new Error('A kérdés módosítása nem sikerült'));
 
-    throw_if(!$deleted,
-      new Error('A kérdés törlése nem sikerült'));
+    return $survey;
+  }
 
-    return $questionnaire->load(['survey']);
+  private function updateSurveyByArgs(Survey $survey, array $args): bool
+  {
+
+    return $survey->update($args);
   }
 }
