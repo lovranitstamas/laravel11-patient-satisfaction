@@ -15,6 +15,11 @@
           {{ message }}
         </div>
 
+        <!-- messages -->
+        <div class="alert alert-success text-center font-weight-bold mt-3" role="alert" v-if="savingSuccessful">
+          Mentés megtörtént
+        </div>
+
         <div class="row">
           <div class="col-12 col-md-8 mx-auto">
             <v-text-field
@@ -43,11 +48,6 @@
               </v-text-field>
             </div>
           </div>
-        </div>
-
-        <!-- messages -->
-        <div class="alert alert-success text-center font-weight-bold mt-3" role="alert" v-if="savingSuccessful">
-          Mentés megtörtént
         </div>
 
         <!-- modals -->
@@ -150,6 +150,7 @@ export default {
     ...mapMutations({setSnackbar: SET_SNACKBAR}),
 
     ...mapActions("Questionnaire", ["getUserQuestionnaire"]),
+    ...mapActions("Response", ["storeResponseData"]),
 
     loadActions() {
       this.getUserQuestionnaire();
@@ -171,6 +172,23 @@ export default {
       if (this.isInputsValid()) {
         this.inProgress = true;
 
+        this.storeResponseData({
+          userResponses: {
+            submitter_name: this.submitter_name, email: this.email,
+            answers: this.answers
+          }
+        })
+            .then((resp) => {
+              this.closeSavingAndUpdating(resp);
+            })
+            .catch(err => {
+              if (err) {
+                this.errors.push(err);
+                this.showErrorModal();
+              }
+              this.inProgress = false;
+              console.log(err)
+            });
       } else {
         this.fillUpErrorArray();
         return false;
@@ -178,7 +196,7 @@ export default {
     },
 
     isInputsValid() {
-      if (this.email && !this.isValidEmail(this.email)) {
+      if (this.email.trim().length && !this.isValidEmail(this.email)) {
         return false;
       }
 
@@ -191,9 +209,48 @@ export default {
     },
 
     isValidEmail(email) {
-      // E-mail validálás regex segítségével
       const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       return emailRegex.test(email);
+    },
+
+    setNullInputs() {
+      this.clearQuestionnaire();
+
+      window.scrollTo(0, 0);
+    },
+
+    clearQuestionnaire() {
+      this.submitter_name = this.email = '';
+
+      for (let key in this.answers) {
+        this.answers[key] = '';
+      }
+    },
+
+    closeSavingAndUpdating(resp) {
+      if (resp && resp.data && !resp.data.errors) {
+
+        this.savingSuccessful = true;
+        this.isUpdateMode = false;
+        this.setNullInputs();
+
+        setTimeout(() => this.savingSuccessful = false, 5000);
+      } else if (resp && resp.data && resp.data.errors) {
+        // if we return r without reject and errors
+        resp.data.errors.forEach((error) => {
+          this.errors.push(error.message);
+        });
+      } else {
+        // If there is no specific answer, we still consider it successful
+        this.savingSuccessful = true;
+        this.isUpdateMode = false;
+
+        this.setNullInputs();
+        setTimeout(() => this.savingSuccessful = false, 5000);
+      }
+
+      this.inProgress = false;
+      return true;
     },
 
     // --------- error modals ---------

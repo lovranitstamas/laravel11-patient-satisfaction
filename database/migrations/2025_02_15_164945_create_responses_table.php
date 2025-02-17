@@ -19,12 +19,12 @@ return new class extends Migration {
       $table->id();
       $table->string('submitter_name')->nullable();
       $table->string('email')->nullable();
-      $table->unsignedBigInteger('survey_id');
+      //$table->unsignedBigInteger('survey_id');
       $table->unsignedBigInteger('question_id');
       $table->string('response');
       $table->timestamps();
 
-      $table->foreign('survey_id')->references('id')->on('surveys');
+      //$table->foreign('survey_id')->references('id')->on('surveys');
       $table->foreign('question_id')->references('id')->on('questions');
     });
   }
@@ -36,8 +36,8 @@ return new class extends Migration {
   {
 
     Schema::table('responses', function (Blueprint $table) {
-      $table->dropForeign('responses_survey_id_foreign');
-      $table->dropColumn('survey_id');
+      //$table->dropForeign('responses_survey_id_foreign');
+      //$table->dropColumn('survey_id');
       $table->dropForeign('responses_question_id_foreign');
       $table->dropColumn('question_id');
     });

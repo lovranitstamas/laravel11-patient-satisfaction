@@ -1,0 +1,94 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\GraphQL\Mutations;
+
+use App\Models\Response;
+use Closure;
+use GraphQL\Error\Error;
+use GraphQL\Type\Definition\ResolveInfo;
+use GraphQL\Type\Definition\Type;
+use Rebing\GraphQL\Support\Facades\GraphQL;
+use Rebing\GraphQL\Support\Mutation;
+use Rebing\GraphQL\Support\SelectFields;
+
+class StoreResponseMutation extends Mutation
+{
+  protected $attributes = [
+    'name' => 'storeResponseMutation',
+    'description' => 'A mutation'
+  ];
+
+  public function type(): Type
+  {
+    return GraphQL::type('ResponseType');
+  }
+
+  public function args(): array
+  {
+    return [
+      'submitter_name' => [
+        'name' => 'submitter_name',
+        'type' => Type::getNullableType(Type::string()),
+      ],
+      'email' => [
+        'name' => 'email',
+        'type' => Type::getNullableType(Type::string()),
+      ],
+    ];
+  }
+
+  /**
+   * @throws Error
+   */
+  public function resolve($root, array $args, $context, ResolveInfo $resolveInfo, Closure $getSelectFields)
+  {
+    /*
+      $fields = $getSelectFields();
+      $select = $fields->getSelect();
+      $with = $fields->getRelations();
+
+      return [];
+    */
+
+    return $this->createResponseByArgs($args);
+  }
+
+  /**
+   * @throws Error
+   */
+  private function createResponseByArgs(array $args): Response
+  {
+    $this->checkRestrictedData($args);
+
+    return $this->storeResponseData($args);
+  }
+
+  /**
+   * Check restricted data
+   *
+   * @param $args
+   * @return void
+   * @throws Error
+   */
+  private function checkRestrictedData($args): void
+  {
+
+  }
+
+  /**
+   * Store inventory base data
+   *
+   * @param array $args
+   * @return Response
+   */
+  private function storeResponseData(array $args): Response
+  {
+
+    $args['question_id'] = 8;
+    $args['response'] = 'demo answer válasz';
+
+    return Response::create($args);
+  }
+}

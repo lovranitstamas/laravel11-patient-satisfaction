@@ -91,6 +91,7 @@ return [
         'storeQuestionMutation' => App\GraphQL\Mutations\StoreQuestionMutation::class,
         'updateQuestionMutation' => App\GraphQL\Mutations\UpdateQuestionMutation::class,
         'deleteQuestionMutation' => App\GraphQL\Mutations\DeleteQuestionMutation::class,
+        'storeResponseMutation' => App\GraphQL\Mutations\StoreResponseMutation::class,
       ],
       // The types only available in this schema
       'types' => [

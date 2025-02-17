@@ -81,10 +81,75 @@ const state = {
     },
     response,
     created_at
+    `,
+  userResponses:
+      `
+    id,
+    submitter_name,
+    email,
+    created_at
     `
 }
 
 const actions = {
+  //user side
+  storeResponseData({commit, rootGetters, dispatch, rootState}, {userResponses}) {
+
+    const submitter_name = userResponses.submitter_name || null;
+    const email = userResponses.email || null;
+
+    console.log(userResponses.answers);
+
+    const MUTATION_NAME = 'storeResponseMutation';
+
+    return new Promise(async (resolve, reject) => {
+      await axios.post(
+          `${window.domainHttps}/graphql`, {
+            query:
+                `mutation ${MUTATION_NAME}(
+                    $submitter_name:String,
+                    $email:String
+                 ) {
+                      ${MUTATION_NAME}(
+                        submitter_name:$submitter_name,
+                        email:$email
+                      ) {
+                        ${state.userResponses}
+                      }
+                    }                           
+                `,
+            variables: {
+              submitter_name: submitter_name,
+              email: email,
+            },
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then(r => {
+            if (r.data.errors) {
+              if (r.data.errors[0]?.extensions?.debugMessage) {
+                return Promise.reject(new Error(r.data.errors[0].extensions.debugMessage));
+              } else {
+                const errorMessage = r.data.errors[0].message || 'An unknown error occurred.';
+                return Promise.reject(new Error(errorMessage));
+              }
+            }
+
+            return r.data.data[MUTATION_NAME];
+          })
+          .then(res => {
+            console.log(res);
+            //commit(TYPES.mutations.storeQuestion, res);
+            resolve();
+          }).catch((err) => {
+            reject(err);
+          });
+    })
+  },
+  //admin side
   getResponseData({commit, rootGetters, dispatch, rootState}, payload = {}) {
     const {search, orderBy} = payload;
 
