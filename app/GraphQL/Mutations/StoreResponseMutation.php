@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Mutations;
 
+use App\Models\Question;
 use App\Models\Response;
 use Closure;
 use GraphQL\Error\Error;
@@ -98,6 +99,9 @@ class StoreResponseMutation extends Mutation
 
       $question_id = (int)$answer[0];
       $response = $answer[1];
+
+      throw_if(is_null(Question::find($question_id)),
+        new Error('A kérdések egyike már nem létezik az adatbázisban'));
 
       $args['question_id'] = $question_id;
       $args['response'] = $response;
