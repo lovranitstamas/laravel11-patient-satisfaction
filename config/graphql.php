@@ -82,6 +82,7 @@ return [
         'surveysBasedOnPaginationQuery' => App\GraphQL\Queries\SurveysBasedOnPaginationQuery::class,
         'questionsQuery' => App\GraphQL\Queries\QuestionsQuery::class,
         'responsesQuery' => App\GraphQL\Queries\ResponsesQuery::class,
+        'usersQuestionsQuery' => App\GraphQL\Queries\UserQuestionsQuery::class,
       ],
       'mutation' => [
         'storeSurveyMutation' => App\GraphQL\Mutations\StoreSurveyMutation::class,
