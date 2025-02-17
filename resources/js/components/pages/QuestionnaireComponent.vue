@@ -133,14 +133,14 @@
           <div class="d-flex justify-content-center align-items-center text-center text-uppercase mt-1">
             <span v-html="item.id_question" class="d-block ms-5"></span>
             <v-icon
-                v-if="!item.exists_in_surveys"
+                v-if="!item.exists_in_responses"
                 @click="loadQuestionnaireData(item)"
                 :class="{ 'text-green': true }"
                 class="mx-2 p-0"
             >
               mdi-pencil
             </v-icon>
-            <v-icon v-if="item.exists_in_surveys"
+            <v-icon v-if="item.exists_in_responses"
                     @click="callDeleteFunction(item)"
                     :class="{ 'text-red': true }"
                     size="x-large"
@@ -152,19 +152,19 @@
 
         <!--button-->
         <template v-slot:item.actions="{ item }">
-          <v-icon v-if="!item.exists_in_surveys"
+          <v-icon v-if="!item.exists_in_responses"
                   @click="loadQuestionnaireData(item)"
                   :class="{ 'text-green': true }"
           >
             mdi-pencil
           </v-icon>
-          <v-icon v-if="!item.exists_in_surveys"
+          <v-icon v-if="!item.exists_in_responses"
                   @click="callDeleteFunction(item)"
                   :class="{ 'text-red': true }"
           >
             mdi-delete
           </v-icon>
-          <v-icon v-if="item.exists_in_surveys"
+          <v-icon v-if="item.exists_in_responses"
                   @click=""
                   :class="{ 'text-red': true }"
                   size="x-large"

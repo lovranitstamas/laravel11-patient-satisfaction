@@ -16,7 +16,7 @@ class Question extends Model
   ];
 
   protected $appends = [
-    'exists_in_surveys'
+    'exists_in_responses'
   ];
 
   /**
@@ -33,7 +33,7 @@ class Question extends Model
     );
   }
 
-  public function getExistsInSurveysAttribute()
+  public function getExistsInResponsesAttribute()
   {
     return (int)Response::where('question_id', $this->id)->exists();
   }
