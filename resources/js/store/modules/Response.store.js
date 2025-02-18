@@ -29,7 +29,7 @@ const initialState = () => ({
       value: "submitter_name",
       align: 'center',
       sortable: false,
-      width: '10%'
+      width: '25%'
     },
     {
       title: "E-mail cím",
@@ -39,18 +39,11 @@ const initialState = () => ({
       width: '10%'
     },
     {
-      title: "Kérdőív",
-      value: "question.survey.name",
-      align: 'center',
-      sortable: false,
-      width: '20%'
-    },
-    {
       title: "Kérdés",
       value: "question.question",
       align: 'center',
       sortable: false,
-      width: '25%'
+      width: '30%'
     },
     {
       title: "Válasz",
@@ -154,15 +147,15 @@ const actions = {
   },
   //admin side
   getResponseData({commit, rootGetters, dispatch, rootState}, payload = {}) {
-    const {search, orderBy} = payload;
+    const {search, orderBy, surveyId} = payload;
 
     const QUERY_NAME = 'responsesQuery';
     return new Promise(async (resolve, reject) => {
       await axios.post(
           // return Axios.post(
           `${window.domainHttps}/graphql`, {
-            query: `query ${QUERY_NAME} ($per_page:Int, $current_page:Int, $search:String, $orderBy:String){
-          ${QUERY_NAME} (per_page:$per_page,current_page:$current_page,search:$search,orderBy:$orderBy){
+            query: `query ${QUERY_NAME} ($survey_id:Int, $per_page:Int, $current_page:Int, $search:String, $orderBy:String){
+          ${QUERY_NAME} (survey_id:$survey_id, per_page:$per_page,current_page:$current_page,search:$search,orderBy:$orderBy){
              data{
                 ${state.responseResponse}
              },
@@ -170,6 +163,7 @@ const actions = {
           }
         }`,
             variables: {
+              survey_id: surveyId,
               current_page: rootState.Table.current_page,
               per_page: rootState.Table.per_page,
 

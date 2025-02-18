@@ -6,6 +6,7 @@ namespace App\GraphQL\Queries;
 
 use App\Helpers\PaginationHelper;
 use App\Models\Response;
+use App\Models\Survey;
 use Closure;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -29,6 +30,10 @@ class ResponsesQuery extends Query
   {
     return [
       ...PaginationHelper::args(),
+      'survey_id' => [
+        'name' => 'survey_id',
+        'type' => Type::getNullableType(Type::int()),
+      ],
     ];
   }
 
@@ -50,11 +55,32 @@ class ResponsesQuery extends Query
 
     $query = $query
       ->where(function ($query) use ($args) {
-      if (isset($args['search'])) {
-        $query->where('response', 'LIKE', "%{$args['search']}%");
-      }
-      return $query;
-    });
+        if (isset($args['survey_id'])) {
+          $query->whereHas('question', function ($query) use ($args) {
+            $query->where('survey_id', $args['survey_id']);
+          });
+        } else {
+          $surveyId = Survey::whereHas('questions.responses')
+            ->orderBy('created_at')
+            ->pluck('id')
+            ->first();
+
+          if ($surveyId) {
+            $query->whereHas('question', function ($query) use ($surveyId) {
+              $query->where('survey_id', $surveyId);
+            });
+          }
+
+        }
+        return $query;
+      })
+
+      ->where(function ($query) use ($args) {
+        if (isset($args['search'])) {
+          $query->where('response', 'LIKE', "%{$args['search']}%");
+        }
+        return $query;
+      });
 
     $query = $query->orderByDesc('created_at');
 

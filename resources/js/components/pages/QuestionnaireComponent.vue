@@ -78,7 +78,7 @@
       <!-- select listed survey -->
       <v-select
           :disabled="pageLoad || isUpdateMode"
-          v-model="selectedSurvey"
+          v-model="selectedSurveyId"
           :items="surveyCollection"
           item-title="name"
           item-value="id"
