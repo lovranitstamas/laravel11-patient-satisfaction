@@ -24,12 +24,21 @@
       <!-- search bar -->
       <v-row v-if="responseCollectionInitStateLength > 0">
         <v-col cols="12">
-          <v-text-field
-              v-model="search"
-              class="my-4"
+          <v-select
               label="Keresés válasz alapján"
-              v-debounce:300ms="fetchData"
-          ></v-text-field>
+              v-model="search"
+              :items="[
+                  { value: null, title: 'Összes' },
+                  { value: '1', title: '1' },
+                  { value: '2', title: '2' },
+                  { value: '3', title: '3' },
+                  { value: '4', title: '4' },
+                  { value: '5', title: '5' }]"
+              item-value="value"
+              item-title="title"
+              @update:modelValue="fetchData"
+          >
+          </v-select>
         </v-col>
       </v-row>
 
@@ -143,7 +152,7 @@ export default {
         console.log('responseCollection változott:', oldValue, '->', newValue)
 
         if (!this.responseCollection || !this.responseCollection.length) {
-          this.message = "Jelenleg nincs kitöltött kérdőív a rendszerben.";
+          this.message = "Jelenleg nincs kitöltött kérdőív a rendszerben a kiválasztott kérdőív alapján.";
           this.responseCollectionLoaded = false;
         } else {
           const firstItem = this.responseCollection.find(item => item.question && item.question.survey);
