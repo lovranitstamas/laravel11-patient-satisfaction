@@ -38,14 +38,24 @@
           </div>
         </div>
 
+        <div class="row">
+          <div class="col-12 col-md-8 mx-auto">
+              <p class="fw-bold text-danger">1 (legrosszabb), 5 (legjobb)</p>
+          </div>
+        </div>
+
         <div v-for="userQuestion in userQuestionCollection">
           <div class="row">
             <div class="col-12 col-md-8 mx-auto">
               <p class="fw-bold">{{ userQuestion.question }}</p>
-              <v-text-field
-                  label="Kérem adjon választ a kérdésre"
-                  v-model="answers[userQuestion.id]">
-              </v-text-field>
+              <v-select
+                  label="Kérem válasszon 1-5 ig"
+                  v-model="answers[userQuestion.id]"
+                  :items="['1','2', '3', '4', '5']"
+              item-value="value"
+              item-title="value"
+              >
+              </v-select>
             </div>
           </div>
         </div>
