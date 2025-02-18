@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Exports;
+
+use App\Models\Survey;
+use Carbon\Carbon;
+use Illuminate\Contracts\Support\Responsable;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Excel;
+
+class QuestionnaireExport implements FromCollection, Responsable, WithHeadings
+{
+
+  use Exportable;
+
+  protected int $surveyId;
+
+  /**
+   * Optional Writer Type
+   */
+  private string $writerType = Excel::XLSX;
+
+  function __construct($surveyId)
+  {
+    $this->surveyId = (int)$surveyId;
+  }
+
+  public static function filename(): string
+  {
+    return Carbon::now()->format('Y-m-d_H-i') . '_questionnaire_export.xlsx';
+  }
+
+  public function headings(): array
+  {
+    return [
+      'ID',
+      'Nem',
+      'Email cím',
+      'Kérdőív neve',
+      'Kérdés',
+      'Válasz'
+    ];
+  }
+
+  /**
+   * @return Collection
+   */
+  public function collection(): Collection
+  {
+    return Survey::where('id', $this->surveyId)
+      ->with(['questions.responses'])
+      ->get()
+      ->flatMap(function ($survey) {
+        return $survey->questions->flatMap(function ($question) use($survey) {
+          return $question->responses->map(function ($response) use ($question, $survey) {
+            return [
+              'id' => $response->id,
+              'gender' => $response->user->gender ?? 'N/A',
+              'email' => $response->user->email ?? 'N/A',
+              'survey_name' => $survey->name,
+              'question' => $question->question,
+              'answer' => $response->response,
+            ];
+          });
+        });
+      });
+  }
+}

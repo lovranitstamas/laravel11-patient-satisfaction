@@ -6,7 +6,17 @@
 
     <div class="w-75 mx-auto">
 
-      <div v-if="(pageLoad || (!pageLoad && !isBaseDataLoaded)) && !search" class="text-center alert alert-info fw-bold">
+      <button class="btn btn-primary my-3" v-if="responseCollection.length && isBaseDataLoaded"
+              @click.prevent="exportFilteredCollection()"
+      >Exportálás a kiválasztott kérdőív alapján
+      </button>
+
+      <div class="alert alert-success text-center fw-bold mt-3" role="alert" v-if="exportMessage">
+        {{ exportMessage }}
+      </div>
+
+      <div v-if="(pageLoad || (!pageLoad && !isBaseDataLoaded)) && !search"
+           class="text-center alert alert-info fw-bold">
         {{ message }}
       </div>
 
@@ -101,6 +111,7 @@
 import PaginationFooter from "../Layout/PaginationFooter.vue";
 import {SET_SNACKBAR} from "../../store/constants";
 import {mapActions, mapGetters, mapMutations, mapState} from "vuex";
+import DataService from "../../DataService";
 
 export default {
   name: "ResponseComponent",
@@ -116,7 +127,9 @@ export default {
       search: null,
       isMobile: window.innerWidth <= 768,
 
-      selectedSurveyId: null
+      selectedSurveyId: null,
+
+      exportMessage: ''
     }
   },
 
@@ -194,6 +207,21 @@ export default {
       this.selectedSurveyId = selectedValue;
 
       this.getResponseData({search: this.search, surveyId: this.selectedSurveyId});
+    },
+
+    // --------- exporting ---------
+    exportFilteredCollection() {
+      this.exportMessage = '';
+
+      DataService.ExportFilteredResponses(this.selectedSurveyId).then(() => {
+        this.exportMessage = "Exportálás megtörtént";
+        setTimeout(() => {
+          this.exportMessage = '';
+        }, 4000)
+      }).catch((err) => {
+        console.log(err);
+        this.errors.push(err.response.data.message)
+      });
     },
 
     // --------- pagination ---------
