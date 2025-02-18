@@ -206,6 +206,7 @@ export default {
     handleSurveyChange(selectedValue) {
       this.selectedSurveyId = selectedValue;
 
+      this.setPage(1);
       this.getResponseData({search: this.search, surveyId: this.selectedSurveyId});
     },
 

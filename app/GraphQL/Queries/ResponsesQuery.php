@@ -55,7 +55,7 @@ class ResponsesQuery extends Query
 
     $query = $query
       ->where(function ($query) use ($args) {
-        if (isset($args['survey_id'])) {
+        if (isset($args) && isset($args['survey_id'])) {
           $query->whereHas('question', function ($query) use ($args) {
             $query->where('survey_id', $args['survey_id']);
           });
@@ -74,7 +74,6 @@ class ResponsesQuery extends Query
         }
         return $query;
       })
-
       ->where(function ($query) use ($args) {
         if (isset($args['search'])) {
           $query->where('response', 'LIKE', "%{$args['search']}%");
@@ -86,7 +85,13 @@ class ResponsesQuery extends Query
 
     $totalResults = (clone $query)->toBase()->getCountForPagination();
 
-    $currentPage = (!empty($args['search']) && $totalResults < ($args['per_page'] ?? 25)) ? 1 : ($args['current_page'] ?? 1);
+    $currentPage = (!empty($args['search']) && $totalResults < ($args['per_page'] ?? 25)) ? 1 :
+      (
+        // Ha a jelenlegi oldal és a per_page szorzata nagyobb, mint a találatok száma, akkor az első oldal
+        ($args['current_page'] ?? 1) > ceil($totalResults / ($args['per_page'] ?? 25))
+        ? 1
+        : ($args['current_page'] ?? 1)
+      );
 
     return $query->paginate($args['per_page'] ?? 25, ['*'], 'page', $currentPage);
   }
