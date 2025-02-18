@@ -36,11 +36,12 @@ class StoreResponseMutation extends Mutation
       'email' => [
         'name' => 'email',
         'type' => Type::getNullableType(Type::string()),
+        'rules' => ['nullable', 'email']
       ],
       'answers' => [
         'name' => 'answers',
         'type' => Type::listOf(Type::listOf(Type::string())),
-      ],
+      ]
     ];
   }
 

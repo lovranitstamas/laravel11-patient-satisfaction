@@ -261,7 +261,7 @@ export default {
 
       for (let question of this.userQuestionCollection) {
         if (!this.answers[question.id] || this.answers[question.id] === '') {
-          this.errors.push(`"<strong>${question.question}</strong>" - kérdés nem válaszolt.`);
+          this.errors.push(`"<strong>${question.question}</strong>" - kérdésre nem válaszolt.`);
         }
       }
 
