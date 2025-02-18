@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\QuestionnaireExport;
 
+use App\Http\Requests\QuestionnaireExportRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -13,10 +14,11 @@ class ExportController extends Controller
 {
 
   /**
-   * @param Request $request
+   * @param QuestionnaireExportRequest $request
+   * @param ResponseFactory $response
    * @return JsonResponse
    */
-  public function index(Request $request, ResponseFactory $response): JsonResponse
+  public function index(QuestionnaireExportRequest $request, ResponseFactory $response): JsonResponse
   {
 
     if (Excel::store(new QuestionnaireExport($request->survey_id), "questionnaire_output/" .
