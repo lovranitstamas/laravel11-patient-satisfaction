@@ -323,6 +323,9 @@ export default {
               .then((resp) => {
                 this.closeSavingAndUpdating(resp);
 
+                this.search = null;
+                this.selectedSurveyId = null;
+
                 this.setPage(1);
                 this.getSurveyDataBasedOnPagination({search: this.search});
               })
@@ -421,6 +424,9 @@ export default {
             this.inProgress = false;
 
             //load first page
+            this.search = null;
+            this.selectedSurveyId = null;
+
             this.setPage(1);
             this.getSurveyDataBasedOnPagination({search: this.search});
 
