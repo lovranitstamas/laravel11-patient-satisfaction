@@ -22,17 +22,22 @@
 
         <div class="row">
           <div class="col-12 col-md-8 mx-auto">
-            <v-text-field
-                label="Kérem adja meg a nevét (opcionális)"
-                v-model="submitter_name">
-            </v-text-field>
+            <v-select
+                label="Nem (opcionális)"
+                :items="genderItems"
+                item-value="value"
+                item-title="title"
+                v-model="submitter_name"
+                @update:modelValue="setSubmitterName"
+            >
+            </v-select>
           </div>
         </div>
 
         <div class="row">
           <div class="col-12 col-md-8 mx-auto">
             <v-text-field
-                label="Kérem adja meg az e-mail címét (opcionális)"
+                label="E-mail cím (opcionális)"
                 v-model="email">
             </v-text-field>
           </div>
@@ -40,7 +45,7 @@
 
         <div class="row">
           <div class="col-12 col-md-8 mx-auto">
-              <p class="fw-bold text-danger">1 (legrosszabb), 5 (legjobb)</p>
+            <p class="fw-bold text-danger">1 (legrosszabb), 5 (legjobb)</p>
           </div>
         </div>
 
@@ -52,8 +57,8 @@
                   label="Kérem válasszon 1-5 ig"
                   v-model="answers[userQuestion.id]"
                   :items="['1','2', '3', '4', '5']"
-              item-value="value"
-              item-title="value"
+                  item-value="value"
+                  item-title="value"
               >
               </v-select>
             </div>
@@ -102,10 +107,16 @@ export default {
       inProgress: false,
       savingSuccessful: false,
 
-      submitter_name: '',
+      submitter_name: null, //gender
       email: '',
       errors: [],
-      answers: {}
+      answers: {},
+
+      genderItems: [
+        {value: null, title: 'Nem adom meg'},
+        {value: 1, title: 'Férfi'},
+        {value: 2, title: 'Nő'}
+      ]
     }
   },
 
@@ -169,6 +180,11 @@ export default {
     init() {
     },
 
+    setSubmitterName(selectedValue) {
+      const selectedItem = this.genderItems.find(item => item.value === selectedValue);
+      this.submitter_name = selectedItem && selectedItem.value ? selectedItem.title : null;
+    },
+
     //save questions and answers
     checkForm: function () {
       //close snackbar;
@@ -230,7 +246,8 @@ export default {
     },
 
     clearQuestionnaire() {
-      this.submitter_name = this.email = '';
+      this.submitter_name = null;
+      this.email = '';
 
       for (let key in this.answers) {
         this.answers[key] = '';
