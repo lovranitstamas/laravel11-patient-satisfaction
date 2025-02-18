@@ -80,6 +80,12 @@ class StoreQuestionMutation extends Mutation
 
     throw_if(is_null(Survey::find($args['survey_id'])),
       new Error('A beállított kérdőív nem létezik'));
+	
+	  $existingQuestion = Question::where('survey_id', $args['survey_id'])
+		  ->where('question', $args['question'])
+		  ->exists();
+	
+	  throw_if($existingQuestion, new Error('Ez a kérdés már létezik ennél a kérdőívnél!'));
   }
 
   /**
