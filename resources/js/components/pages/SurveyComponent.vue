@@ -167,7 +167,7 @@
       </div>
 
       <div style="margin-top: 70px" v-if="blade==1">
-        <a href="/">
+        <a href="admin">
           <button class="btn btn-primary">
             Kezdőlap
           </button>
