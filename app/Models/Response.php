@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Response extends Model
 {
@@ -18,15 +19,11 @@ class Response extends Model
   /**
    * Relation: Survey of this Response
    *
-   * @return BelongsTo
+   * @return HasOneThrough
    */
-  public function survey(): BelongsTo
+  public function survey(): HasOneThrough
   {
-    return $this->belongsTo(
-      Survey::class,
-      'survey_id',
-      'id'
-    );
+    return $this->hasOneThrough(Survey::class, Question::class, 'id', 'id', 'question_id', 'survey_id');
   }
 
   /**

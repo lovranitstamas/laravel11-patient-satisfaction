@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Question extends Model
 {
@@ -31,6 +32,11 @@ class Question extends Model
       'survey_id',
       'id'
     );
+  }
+
+  public function responses(): HasMany
+  {
+    return $this->hasMany(Response::class, 'question_id');
   }
 
   public function getExistsInResponsesAttribute()

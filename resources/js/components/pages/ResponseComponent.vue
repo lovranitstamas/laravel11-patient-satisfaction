@@ -10,6 +10,17 @@
         {{ message }}
       </div>
 
+      <!-- select listed survey -->
+      <v-select
+          :disabled="pageLoad"
+          v-model="selectedSurveyId"
+          :items="surveyCollection"
+          item-title="name"
+          item-value="id"
+          label="Kérdőív kiválasztása"
+          @update:modelValue="handleSurveyChange"
+      ></v-select>
+
       <!-- search bar -->
       <v-row v-if="responseCollectionInitStateLength > 0">
         <v-col cols="12">
@@ -95,6 +106,8 @@ export default {
 
       search: null,
       isMobile: window.innerWidth <= 768,
+
+      selectedSurveyId: null
     }
   },
 
@@ -109,6 +122,7 @@ export default {
       },
       blade: state => state.blade
     }),
+    ...mapGetters('Survey', ["surveyCollection"]),
     ...mapGetters('Response', ["headers", "mobileHeaders", "responseCollection", "responseCollectionInitStateLength"])
   },
 
@@ -132,6 +146,12 @@ export default {
           this.message = "Jelenleg nincs kitöltött kérdőív a rendszerben.";
           this.responseCollectionLoaded = false;
         } else {
+          const firstItem = this.responseCollection.find(item => item.question && item.question.survey);
+
+          if (firstItem) {
+            this.selectedSurveyId = firstItem.question.survey.id;
+          }
+
           this.responseCollectionLoaded = true;
         }
       }
@@ -151,12 +171,20 @@ export default {
     ...mapActions("Table", ["setPage"]),
 
     ...mapActions("Response", ["getResponseData"]),
+    ...mapActions("Survey", ["getSurveyData"]),
 
     loadActions() {
       this.getResponseData();
+      this.getSurveyData();
     },
 
     init() {
+    },
+
+    handleSurveyChange(selectedValue) {
+      this.selectedSurveyId = selectedValue;
+
+      this.getResponseData({search: this.search, surveyId: this.selectedSurveyId});
     },
 
     // --------- pagination ---------
@@ -165,12 +193,12 @@ export default {
     },
 
     fetchData() {
-      this.getResponseData({search: this.search});
+      this.getResponseData({search: this.search, surveyId: this.selectedSurveyId});
     },
 
     setCurrentPage(e) {
       this.setPage(e);
-      this.getResponseData({search: this.search});
+      this.getResponseData({search: this.search, surveyId: this.selectedSurveyId});
     },
   }
 
