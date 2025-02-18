@@ -25,7 +25,7 @@ const initialState = () => ({
       width: '5%'
     },
     {
-      title: "Beküldő neve",
+      title: "Nem",
       value: "submitter_name",
       align: 'center',
       sortable: false,

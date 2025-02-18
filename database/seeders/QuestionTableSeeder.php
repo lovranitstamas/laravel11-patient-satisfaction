@@ -12,15 +12,15 @@ class QuestionTableSeeder extends Seeder
 
   private const QUESTIONS = [
     [
-      'question' => 'Mennyire elégedett az orvosi ellátás minőségével?',
+      'question' => 'Mennyire volt elégedett a várakozási idő hosszával az ellátás során?',
       'survey_id' => null
     ],
     [
-      'question' => 'Mennyire volt könnyű időpontot foglalni a vizsgálatra vagy kezelésre',
+      'question' => 'Mennyire volt elégedett az egészségügyi intézmény felszereltségével és eszközeivel?',
       'survey_id' => null
     ],
     [
-      'question' => 'Mennyire volt barátságos és segítőkész az egészségügyi személyzet?',
+      'question' => 'Milyen mértékben érezte úgy, hogy az egészségügyi személyzet figyelmes és tisztelettudó volt Önnel szemben?',
       'survey_id' => null
     ],
     [
@@ -32,7 +32,7 @@ class QuestionTableSeeder extends Seeder
       'survey_id' => null
     ],
     [
-      'question' => 'Mennyi időt kellett várnia a vizsgálatra vagy kezelésre az érkezése után?',
+      'question' => 'Mennyire érezte magát biztonságban és megfelelően ellátva az egészségügyi intézményben?',
       'survey_id' => null
     ],
     [
@@ -40,7 +40,7 @@ class QuestionTableSeeder extends Seeder
       'survey_id' => null
     ],
     [
-      'question' => 'Kapott-e megfelelő információt a kezelés utáni teendőkről?',
+      'question' => 'Mennyire volt elégedett az időpontfoglalás folyamatával és annak gördülékenységével?',
       'survey_id' => null
     ],
     [
@@ -52,11 +52,11 @@ class QuestionTableSeeder extends Seeder
       'survey_id' => null
     ],
     [
-      'question' => 'Mennyire volt gördülékeny a betegfelvételi folyamat?',
+      'question' => 'Mennyire volt gördülékeny az ellátás?',
       'survey_id' => null
     ],
     [
-      'question' => 'Ajánlaná-e ezt az egészségügyi intézményt másoknak?',
+      'question' => 'Mennyire volt elégedett a kapott kezelés hatékonyságával?',
       'survey_id' => null
     ],
   ];
