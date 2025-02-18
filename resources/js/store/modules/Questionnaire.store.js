@@ -6,6 +6,7 @@ export const TYPES = {
   },
   mutations: {
     getQuestions: "getQuestions",
+    getUserQuestions: "getUserQuestions",
     storeQuestion: "storeQuestion",
     updateQuestion: "updateQuestion",
     deleteQuestion: "deleteQuestion",
@@ -57,6 +58,7 @@ const initialState = () => ({
 const state = {
   ...initialState(),
   questions: [],
+  userQuestions: [],
   questionsInitStateLength: 0,
   questionsQueryResponse:
       `
@@ -69,9 +71,37 @@ const state = {
     },
     created_at
     `,
+  userQuestionsQueryResponse:
+      `
+    id,
+    question
+    `,
 }
 
 const actions = {
+  //user
+  getUserQuestionnaire({commit, rootGetters, dispatch, rootState}, payload = {}) {
+    const QUERY_NAME = 'usersQuestionsQuery';
+    return new Promise(async (resolve, reject) => {
+      await axios.post(
+          // return Axios.post(
+          `${window.domainHttps}/graphql`, {
+            query: `{
+                ${QUERY_NAME} {
+                   ${state.userQuestionsQueryResponse}
+              }
+           }`
+          })
+          .then(r => r.data.data[QUERY_NAME])
+          .then(r => {
+            commit(TYPES.mutations.getUserQuestions, r);
+            resolve();
+          }).catch((err) => {
+            reject(err);
+          });
+    })
+  },
+  //admin
   getQuestionData({commit, rootGetters, dispatch, rootState}, payload = {}) {
     const {search, orderBy, surveyId} = payload;
 
@@ -299,6 +329,9 @@ const mutations = {
       }).length;
     }
   },
+  [TYPES.mutations.getUserQuestions](state, payload) {
+    state.userQuestions = payload;
+  },
   [TYPES.mutations.storeQuestion](state, payload) {
     state.questions.unshift(payload)
   },
@@ -323,6 +356,7 @@ const getters = {
     ...item,
     id_question: `<b>${item.id}</b><br>${item.question || ''}`
   })),
+  userQuestionCollection: (state) => state.userQuestions,
   questionCollectionInitStateLength: (state) => state.questionsInitStateLength
 };
 

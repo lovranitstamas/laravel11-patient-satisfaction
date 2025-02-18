@@ -55,12 +55,20 @@
 
       </v-data-table>
 
-      <div style="margin-top: 70px">
+      <div style="margin-top: 70px" v-if="blade==0">
         <RouterLink to="/">
           <button class="btn btn-primary">
             Kezdőlap
           </button>
         </RouterLink>
+      </div>
+
+      <div style="margin-top: 70px" v-if="blade==1">
+        <a href="/">
+          <button class="btn btn-primary">
+            Kezdőlap
+          </button>
+        </a>
       </div>
 
     </div>
@@ -99,6 +107,7 @@ export default {
       isBaseDataLoaded() {
         return this.responseCollectionLoaded;
       },
+      blade: state => state.blade
     }),
     ...mapGetters('Response', ["headers", "mobileHeaders", "responseCollection", "responseCollectionInitStateLength"])
   },

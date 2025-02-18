@@ -15,6 +15,7 @@ return [
 
   'name' => env('APP_NAME', 'Laravel'),
   'blade_render_mode' => env('BLADE_RENDER_MODE', 1),
+  'question_limit' => env('QUESTION_LIMIT', 7),
 
   /*
   |--------------------------------------------------------------------------

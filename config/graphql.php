@@ -82,6 +82,7 @@ return [
         'surveysBasedOnPaginationQuery' => App\GraphQL\Queries\SurveysBasedOnPaginationQuery::class,
         'questionsQuery' => App\GraphQL\Queries\QuestionsQuery::class,
         'responsesQuery' => App\GraphQL\Queries\ResponsesQuery::class,
+        'usersQuestionsQuery' => App\GraphQL\Queries\UserQuestionsQuery::class,
       ],
       'mutation' => [
         'storeSurveyMutation' => App\GraphQL\Mutations\StoreSurveyMutation::class,
@@ -90,6 +91,7 @@ return [
         'storeQuestionMutation' => App\GraphQL\Mutations\StoreQuestionMutation::class,
         'updateQuestionMutation' => App\GraphQL\Mutations\UpdateQuestionMutation::class,
         'deleteQuestionMutation' => App\GraphQL\Mutations\DeleteQuestionMutation::class,
+        'storeResponseMutation' => App\GraphQL\Mutations\StoreResponseMutation::class,
       ],
       // The types only available in this schema
       'types' => [

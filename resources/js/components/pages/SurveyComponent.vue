@@ -158,12 +158,20 @@
 
       </v-data-table>
 
-      <div style="margin-top: 70px">
+      <div style="margin-top: 70px" v-if="blade==0">
         <RouterLink to="/">
           <button class="btn btn-primary">
             Kezdőlap
           </button>
         </RouterLink>
+      </div>
+
+      <div style="margin-top: 70px" v-if="blade==1">
+        <a href="/">
+          <button class="btn btn-primary">
+            Kezdőlap
+          </button>
+        </a>
       </div>
 
 
@@ -219,6 +227,7 @@ export default {
       isBaseDataLoaded() {
         return this.surveyCollectionLoaded;
       },
+      blade: state => state.blade
     }),
     ...mapGetters('Survey', ["headers", "mobileHeaders", "surveyCollectionBasedOnPagination", "surveyCollectionBasedOnPaginationInitStateLength"])
   },
