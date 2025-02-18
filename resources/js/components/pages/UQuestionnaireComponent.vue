@@ -49,10 +49,10 @@
           </div>
         </div>
 
-        <div v-for="userQuestion in userQuestionCollection">
+        <div v-for="(userQuestion, index) in userQuestionCollection" :key="userQuestion.id">
           <div class="row">
             <div class="col-12 col-md-8 mx-auto">
-              <p class="fw-bold">{{ userQuestion.question }}</p>
+              <p class="fw-bold">{{ index + 1 }}. {{ userQuestion.question }}</p>
               <v-select
                   label="Kérem válasszon 1-5 ig"
                   v-model="answers[userQuestion.id]"
