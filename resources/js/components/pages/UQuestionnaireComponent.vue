@@ -10,79 +10,88 @@
           ref="form"
           class="pt-5"
       >
+        <fieldset :disabled="inProgress">
 
-        <div v-if="pageLoad || (!pageLoad && !isBaseDataLoaded)" class="text-center alert alert-info fw-bold">
-          {{ message }}
-        </div>
-
-        <!-- messages -->
-        <div class="alert alert-success text-center font-weight-bold mt-3" role="alert" v-if="savingSuccessful">
-          Mentés megtörtént
-        </div>
-
-        <div class="row">
-          <div class="col-12 col-md-8 mx-auto">
-            <v-select
-                label="Nem (opcionális)"
-                :items="genderItems"
-                item-value="value"
-                item-title="title"
-                v-model="submitter_name"
-                @update:modelValue="setSubmitterName"
-            >
-            </v-select>
+          <div v-if="pageLoad || (!pageLoad && !isBaseDataLoaded)" class="text-center alert alert-info fw-bold">
+            {{ message }}
           </div>
-        </div>
 
-        <div class="row">
-          <div class="col-12 col-md-8 mx-auto">
-            <v-text-field
-                label="E-mail cím (opcionális)"
-                v-model="email">
-            </v-text-field>
+          <!-- messages -->
+          <div class="alert alert-success text-center fw-bold mt-3" role="alert" v-if="savingSuccessful">
+            Mentés megtörtént
           </div>
-        </div>
 
-        <div class="row">
-          <div class="col-12 col-md-8 mx-auto">
-            <p class="fw-bold text-danger">1 (legrosszabb), 5 (legjobb)</p>
-          </div>
-        </div>
-
-        <div v-for="(userQuestion, index) in userQuestionCollection" :key="userQuestion.id">
           <div class="row">
             <div class="col-12 col-md-8 mx-auto">
-              <p class="fw-bold">{{ index + 1 }}. {{ userQuestion.question }}</p>
               <v-select
-                  label="Kérem válasszon 1-5 ig"
-                  v-model="answers[userQuestion.id]"
-                  :items="['1','2', '3', '4', '5']"
+                  label="Nem (opcionális)"
+                  :items="genderItems"
                   item-value="value"
-                  item-title="value"
+                  item-title="title"
+                  v-model="submitter_name"
+                  @update:modelValue="setSubmitterName"
+                  :readonly="inProgress"
               >
               </v-select>
             </div>
           </div>
-        </div>
 
-        <!-- modals -->
-        <b-modal ref="b-modal-form-error" ok-only centered title="Hiba" @ok="closeErrorModal()">
-          <ul class="my-4" v-if="errors.length">
-            <li v-for="error in errors"><span v-html="error"></span></li>
-          </ul>
-        </b-modal>
-
-        <div class="row">
-          <div class="col-12 col-md-6 mx-auto text-center">
-            <button
-                type="button"
-                @click.prevent="checkForm()"
-                class="btn btn-lg btn-primary text-white"
-                :disabled="inProgress || emptyDatabase"
-            >Válaszok elküldése
-            </button>
+          <div class="row">
+            <div class="col-12 col-md-8 mx-auto">
+              <v-text-field
+                  label="E-mail cím (opcionális)"
+                  v-model="email">
+              </v-text-field>
+            </div>
           </div>
-        </div>
+
+          <div class="row">
+            <div class="col-12 col-md-8 mx-auto">
+              <p class="fw-bold text-danger">1 (legrosszabb), 5 (legjobb)</p>
+            </div>
+          </div>
+
+          <div v-for="(userQuestion, index) in userQuestionCollection" :key="userQuestion.id">
+            <div class="row">
+              <div class="col-12 col-md-8 mx-auto">
+                <p class="fw-bold">{{ index + 1 }}. {{ userQuestion.question }}</p>
+                <v-select
+                    label="Kérem válasszon 1-5 ig"
+                    v-model="answers[userQuestion.id]"
+                    :items="['1','2', '3', '4', '5']"
+                    item-value="value"
+                    item-title="value"
+                    :readonly="inProgress"
+                >
+                </v-select>
+              </div>
+            </div>
+          </div>
+
+          <!-- modals -->
+          <b-modal ref="b-modal-form-error" ok-only centered title="Hiba" @ok="closeErrorModal()">
+            <ul class="my-4" v-if="errors.length">
+              <li v-for="error in errors"><span v-html="error"></span></li>
+            </ul>
+          </b-modal>
+
+          <div class="row">
+            <div class="col-12 col-md-6 mx-auto text-center">
+              <div class="alert alert-info text-center fw-bold mt-3" role="alert" v-if="inProgress">
+                Mentés folyamatban
+              </div>
+
+              <button
+                  type="button"
+                  @click.prevent="checkForm()"
+                  class="btn btn-lg btn-primary text-white"
+                  :disabled="inProgress || emptyDatabase"
+              >Válaszok elküldése
+              </button>
+            </div>
+          </div>
+
+        </fieldset>
 
       </form>
 

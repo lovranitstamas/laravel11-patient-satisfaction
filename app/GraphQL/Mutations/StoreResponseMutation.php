@@ -6,10 +6,13 @@ namespace App\GraphQL\Mutations;
 
 use App\Models\Question;
 use App\Models\Response;
+use App\Models\User;
+use App\Notifications\EmailNotification;
 use Closure;
 use GraphQL\Error\Error;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
+use Illuminate\Support\Facades\Notification;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Mutation;
 use Rebing\GraphQL\Support\SelectFields;
@@ -95,6 +98,7 @@ class StoreResponseMutation extends Mutation
     $createdResponse = null;
 
     $answers = $args['answers'];
+    $clonedAnswers = [];
 
     foreach ($answers as $answer) {
 
@@ -103,6 +107,9 @@ class StoreResponseMutation extends Mutation
 
       throw_if(is_null(Question::find($question_id)),
         new Error('A kérdések egyike már nem létezik az adatbázisban'));
+      $clonedAnswers[] = [
+        Question::find($question_id)->question, $answer[1]
+      ];
 
       $args['question_id'] = $question_id;
       $args['response'] = $response;
@@ -113,6 +120,21 @@ class StoreResponseMutation extends Mutation
         $createdResponse = $item;
       }
 
+    }
+
+    //send notifications
+    if ($createdResponse && count($answers)) {
+      if (!empty($args['email'])) {
+        Notification::route('mail', $args['email'])->notify(
+          new EmailNotification($args['submitter_name'], $clonedAnswers)
+        );
+      }
+
+      if ($adminEmailAddress = User::first()?->email) {
+        Notification::route('mail', $adminEmailAddress)->notify(
+          new EmailNotification($args['submitter_name'], $clonedAnswers)
+        );
+      }
     }
 
     return $createdResponse;
