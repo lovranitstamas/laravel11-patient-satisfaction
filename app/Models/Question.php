@@ -34,13 +34,13 @@ class Question extends Model
     );
   }
 
-  public function responses(): HasMany
+  public function survey_responses(): HasMany
   {
-    return $this->hasMany(Response::class, 'question_id');
+    return $this->hasMany(SurveyResponse::class, 'question_id');
   }
 
   public function getExistsInResponsesAttribute()
   {
-    return (int)Response::where('question_id', $this->id)->exists();
+    return (int)SurveyResponse::where('question_id', $this->id)->exists();
   }
 }

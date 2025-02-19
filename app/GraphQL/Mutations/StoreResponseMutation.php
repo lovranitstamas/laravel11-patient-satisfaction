@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\GraphQL\Mutations;
 
 use App\Models\Question;
-use App\Models\Response;
+use App\Models\SurveyResponse;
 use App\Models\User;
 use App\Notifications\EmailNotification;
 use Closure;
@@ -71,7 +71,7 @@ class StoreResponseMutation extends Mutation
   /**
    * @throws Error
    */
-  private function createResponseByArgs(array $args): Response
+  private function createResponseByArgs(array $args): SurveyResponse
   {
     $this->checkRestrictedData($args);
 
@@ -89,14 +89,14 @@ class StoreResponseMutation extends Mutation
   {
 
   }
-
-  /**
-   * Store inventory base data
-   *
-   * @param array $args
-   * @return Response
-   */
-  private function storeResponseData(array $args): Response
+	
+	/**
+	 * Store inventory base data
+	 *
+	 * @param array $args
+	 * @return SurveyResponse
+	 */
+  private function storeResponseData(array $args): SurveyResponse
   {
 
     $createdResponse = null;
@@ -119,7 +119,7 @@ class StoreResponseMutation extends Mutation
       $args['response'] = $response;
 
       //saving
-      $item = Response::create($args);
+      $item = SurveyResponse::create($args);
 
       //response
       if (!$createdResponse) {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\GraphQL\Types;
 
 use App\Models\Question;
-use App\Models\Response;
+use App\Models\SurveyResponse;
 use GraphQL\Type\Definition\Type;
 use Rebing\GraphQL\Support\Facades\GraphQL;
 use Rebing\GraphQL\Support\Type as GraphQLType;
@@ -15,7 +15,7 @@ class ResponseType extends GraphQLType
   protected $attributes = [
     'name' => 'ResponseType',
     'description' => 'A type',
-    'model' => Response::class
+    'model' => SurveyResponse::class
   ];
 
   public function fields(): array

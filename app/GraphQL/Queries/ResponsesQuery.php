@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\GraphQL\Queries;
 
 use App\Helpers\PaginationHelper;
-use App\Models\Response;
 use App\Models\Survey;
+use App\Models\SurveyResponse;
 use Closure;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -51,7 +51,7 @@ class ResponsesQuery extends Query
 		];
 		*/
 		
-		$query = Response::query();
+		$query = SurveyResponse::query();
 		
 		$query = $query
 			->where(function ($query) use ($args) {
@@ -60,7 +60,7 @@ class ResponsesQuery extends Query
 						$query->where('survey_id', $args['survey_id']);
 					});
 				} else {
-					$surveyId = Survey::whereHas('questions.responses')
+					$surveyId = Survey::whereHas('questions.survey_responses')
 						->orderBy('created_at')
 						->pluck('id')
 						->first();
