@@ -59,9 +59,9 @@ class QuestionnaireExport implements FromCollection, Responsable, WithHeadings
           return $question->responses->map(function ($response) use ($question, $survey) {
             return [
               'id' => $response->id,
-              'submitter_name' => $response->user->submitter_name ?? 'N/A',
-              'gender' => $response->user->gender ?? 'N/A',
-              'email' => $response->user->email ?? 'N/A',
+              'submitter_name' => $response->submitter_name ?? 'N/A',
+              'gender' => $response->gender ?? 'N/A',
+              'email' => $response->email ?? 'N/A',
               'survey_name' => $survey->name,
               'question' => $question->question,
               'answer' => $response->response,
