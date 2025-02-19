@@ -11,16 +11,20 @@ class EmailNotification extends Notification
 {
   use Queueable;
 
-  private string | null $submitter_name;
+  private string $subject;
+  private string|null $submitter_name;
   private array $answers;
+  private int $toAdmin;
 
   /**
    * Create a new notification instance.
    */
-  public function __construct($submitter_name, $answers)
+  public function __construct($subject, $submitter_name, $answers, $toAdmin)
   {
+    $this->subject = $subject;
     $this->submitter_name = $submitter_name;
     $this->answers = $answers;
+    $this->toAdmin = $toAdmin;
   }
 
   /**
@@ -47,8 +51,13 @@ class EmailNotification extends Notification
 
     $mailMessage = (new MailMessage)
       ->from(env('MAIL_FROM_ADDRESS'), config('app.name'))
-      ->subject('Kérdőív kitöltve')
-      ->greeting('Tisztelt kérdőív kitöltő!')
+      ->subject($this->subject);
+
+    if ($this->toAdmin) {
+      $mailMessage->line('---- Másolat egy frissen beérkezett kitöltött kérdőívről az admin részére ----');
+    }
+
+    $mailMessage->greeting('Tisztelt kérdőív kitöltő!')
       ->line('Az alábbiakban megtalálja a kitöltött kérdőív adatait:');
 
     if ($this->submitter_name) {
