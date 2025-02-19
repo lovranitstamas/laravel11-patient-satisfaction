@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 //TODO modify model name
-class Response extends Model
+class SurveyResponse extends Model
 {
   protected $fillable = [
     'submitter_name',

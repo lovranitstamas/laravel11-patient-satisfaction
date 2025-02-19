@@ -52,11 +52,11 @@ class QuestionnaireExport implements FromCollection, Responsable, WithHeadings
   public function collection(): Collection
   {
     return Survey::where('id', $this->surveyId)
-      ->with(['questions.responses'])
+      ->with(['questions.survey_responses'])
       ->get()
       ->flatMap(function ($survey) {
         return $survey->questions->flatMap(function ($question) use($survey) {
-          return $question->responses->map(function ($response) use ($question, $survey) {
+          return $question->survey_responses->map(function ($response) use ($question, $survey) {
             return [
               'id' => $response->id,
               'submitter_name' => $response->submitter_name ?? 'N/A',

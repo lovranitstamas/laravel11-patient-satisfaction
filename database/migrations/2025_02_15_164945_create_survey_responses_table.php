@@ -10,7 +10,7 @@ return new class extends Migration {
    */
   public function up(): void
   {
-    Schema::create('responses', function (Blueprint $table) {
+    Schema::create('survey_responses', function (Blueprint $table) {
 
       $table->charset = 'utf8';
       $table->collation = 'utf8_general_ci';
@@ -36,13 +36,13 @@ return new class extends Migration {
   public function down(): void
   {
 
-    Schema::table('responses', function (Blueprint $table) {
+    Schema::table('survey_responses', function (Blueprint $table) {
       //$table->dropForeign('responses_survey_id_foreign');
       //$table->dropColumn('survey_id');
-      $table->dropForeign('responses_question_id_foreign');
+      $table->dropForeign('survey_responses_question_id_foreign');
       $table->dropColumn('question_id');
     });
 
-    Schema::dropIfExists('responses');
+    Schema::dropIfExists('survey_responses');
   }
 };

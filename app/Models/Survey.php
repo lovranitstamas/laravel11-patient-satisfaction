@@ -22,7 +22,7 @@ class Survey extends Model
   {
     $questions = $this->questions;
 
-    $existsInResponses = Response::whereIn('question_id', $questions->pluck('id'))->exists();
+    $existsInResponses = SurveyResponse::whereIn('question_id', $questions->pluck('id'))->exists();
 
     $surveyExistsInQuestions = Question::whereIn('survey_id', $questions->pluck('survey_id'))->exists();
 
