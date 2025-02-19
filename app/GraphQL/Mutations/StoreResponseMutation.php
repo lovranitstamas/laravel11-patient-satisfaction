@@ -126,13 +126,15 @@ class StoreResponseMutation extends Mutation
     if ($createdResponse && count($answers)) {
       if (!empty($args['email'])) {
         Notification::route('mail', $args['email'])->notify(
-          new EmailNotification($args['submitter_name'], $clonedAnswers)
+          new EmailNotification('Kérdőív kitöltve', $args['submitter_name'], $clonedAnswers, 0)
         );
       }
 
-      if ($adminEmailAddress = User::first()?->email) {
-        Notification::route('mail', $adminEmailAddress)->notify(
-          new EmailNotification($args['submitter_name'], $clonedAnswers)
+      $adminEmails = User::pluck('email')->filter();
+
+      foreach ($adminEmails as $email) {
+        Notification::route('mail', $email)->notify(
+          new EmailNotification('Értesítés kérdőív kitöltésről', $args['submitter_name'], $clonedAnswers, 1)
         );
       }
     }
