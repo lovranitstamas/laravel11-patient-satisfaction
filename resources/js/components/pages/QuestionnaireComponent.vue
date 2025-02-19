@@ -34,7 +34,7 @@
         </div>
 
         <!-- messages -->
-        <div class="alert alert-info text-center font-weight-bold mt-3" role="alert" v-if="changedNothing">
+        <div class="alert alert-info text-center fw-bold mt-3" role="alert" v-if="changedNothing">
           Nem történt változás. Vissza az új adatfelvitelre
         </div>
 
@@ -42,11 +42,11 @@
           Művelet folyamatban
         </div>
 
-        <div class="alert alert-success text-center font-weight-bold mt-3" role="alert" v-if="savingSuccessful">
+        <div class="alert alert-success text-center fw-bold mt-3" role="alert" v-if="savingSuccessful">
           Mentés megtörtént
         </div>
 
-        <div class="alert alert-success text-center font-weight-bold mt-3" role="alert" v-if="deletingSuccessful">
+        <div class="alert alert-success text-center fw-bold mt-3" role="alert" v-if="deletingSuccessful">
           Törlés megtörtént
         </div>
 
