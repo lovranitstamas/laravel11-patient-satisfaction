@@ -13,16 +13,18 @@ class EmailNotification extends Notification
 
   private string $subject;
   private string|null $submitter_name;
+  private string|null $gender;
   private array $answers;
   private int $toAdmin;
 
   /**
    * Create a new notification instance.
    */
-  public function __construct($subject, $submitter_name, $answers, $toAdmin)
+  public function __construct($subject, $submitter_name, $gender, $answers, $toAdmin)
   {
     $this->subject = $subject;
     $this->submitter_name = $submitter_name;
+    $this->gender = $gender;
     $this->answers = $answers;
     $this->toAdmin = $toAdmin;
   }
@@ -61,7 +63,11 @@ class EmailNotification extends Notification
       ->line('Az alábbiakban megtalálja a kitöltött kérdőív adatait:');
 
     if ($this->submitter_name) {
-      $mailMessage->line('Neme: ' . $this->submitter_name);
+      $mailMessage->line('Név: ' . $this->submitter_name);
+    }
+
+    if ($this->gender) {
+      $mailMessage->line('Neme: ' . $this->gender);
     }
 
     foreach ($this->answers as $answer) {
@@ -73,8 +79,8 @@ class EmailNotification extends Notification
     }
 
     return $mailMessage
-      ->line('Üdvözlettel,')
-      ->salutation('Teszt Program Hivatal');
+      //->line('Üdvözlettel,')
+      ->salutation('Köszönjük a válaszadást!');
 
   }
 

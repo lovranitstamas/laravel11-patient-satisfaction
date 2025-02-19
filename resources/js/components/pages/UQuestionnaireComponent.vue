@@ -23,12 +23,21 @@
 
           <div class="row">
             <div class="col-12 col-md-8 mx-auto">
+              <v-text-field
+                  label="Beküldő neve (opcionális)"
+                  v-model="submitter_name">
+              </v-text-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12 col-md-8 mx-auto">
               <v-select
                   label="Nem (opcionális)"
                   :items="genderItems"
                   item-value="value"
                   item-title="title"
-                  v-model="submitter_name"
+                  v-model="gender"
                   @update:modelValue="setSubmitterName"
                   :readonly="inProgress"
               >
@@ -116,7 +125,8 @@ export default {
       inProgress: false,
       savingSuccessful: false,
 
-      submitter_name: null, //gender
+      submitter_name: null,
+      gender: null,
       email: '',
       errors: [],
       answers: {},
@@ -191,7 +201,7 @@ export default {
 
     setSubmitterName(selectedValue) {
       const selectedItem = this.genderItems.find(item => item.value === selectedValue);
-      this.submitter_name = selectedItem && selectedItem.value ? selectedItem.title : null;
+      this.gender = selectedItem && selectedItem.value ? selectedItem.title : null;
     },
 
     //save questions and answers
@@ -209,7 +219,9 @@ export default {
 
         this.storeResponseData({
           userResponses: {
-            submitter_name: this.submitter_name, email: this.email,
+            submitter_name: this.submitter_name,
+            gender: this.gender,
+            email: this.email,
             answers: this.answers
           }
         })
@@ -255,8 +267,8 @@ export default {
     },
 
     clearQuestionnaire() {
-      this.submitter_name = null;
-      this.email = '';
+      this.submitter_name = this.email = '';
+      this.gender = null;
 
       for (let key in this.answers) {
         this.answers[key] = '';

@@ -25,11 +25,18 @@ const initialState = () => ({
       width: '5%'
     },
     {
-      title: "Nem",
+      title: "Beküldő neve",
       value: "submitter_name",
       align: 'center',
       sortable: false,
-      width: '25%'
+      width: '15%'
+    },
+    {
+      title: "Nem",
+      value: "gender",
+      align: 'center',
+      sortable: false,
+      width: '10%'
     },
     {
       title: "E-mail cím",
@@ -63,6 +70,7 @@ const state = {
       `
     id,
     submitter_name,
+    gender
     email,
     question {
       id
@@ -89,6 +97,7 @@ const actions = {
   storeResponseData({commit, rootGetters, dispatch, rootState}, {userResponses}) {
 
     const submitter_name = userResponses.submitter_name || null;
+    const gender = userResponses.gender || null;
     const email = userResponses.email || null;
 
     const answersArray = Object.entries(userResponses.answers).map(([question_id, response]) => [question_id, response]);
@@ -101,13 +110,15 @@ const actions = {
             query:
                 `mutation ${MUTATION_NAME}(
                     $submitter_name:String,
+                    $gender:String,
                     $email:String,
                     $answers: [[String]]  
                  ) {
                       ${MUTATION_NAME}(
                         submitter_name:$submitter_name,
+                        gender:$gender,
                         email:$email,
-                         answers: $answers 
+                        answers: $answers 
                       ) {
                         ${state.userResponses}
                       }
@@ -115,6 +126,7 @@ const actions = {
                 `,
             variables: {
               submitter_name: submitter_name,
+              gender: gender,
               email: email,
               answers: answersArray
             },

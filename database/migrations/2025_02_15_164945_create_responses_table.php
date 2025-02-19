@@ -18,6 +18,7 @@ return new class extends Migration {
 
       $table->id();
       $table->string('submitter_name')->nullable();
+      $table->string('gender')->nullable();
       $table->string('email')->nullable();
       //$table->unsignedBigInteger('survey_id');
       $table->unsignedBigInteger('question_id');

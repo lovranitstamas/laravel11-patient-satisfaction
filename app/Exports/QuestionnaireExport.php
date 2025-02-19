@@ -37,6 +37,7 @@ class QuestionnaireExport implements FromCollection, Responsable, WithHeadings
   {
     return [
       'ID',
+      'Beküldő neve',
       'Nem',
       'Email cím',
       'Kérdőív neve',
@@ -58,6 +59,7 @@ class QuestionnaireExport implements FromCollection, Responsable, WithHeadings
           return $question->responses->map(function ($response) use ($question, $survey) {
             return [
               'id' => $response->id,
+              'submitter_name' => $response->user->submitter_name ?? 'N/A',
               'gender' => $response->user->gender ?? 'N/A',
               'email' => $response->user->email ?? 'N/A',
               'survey_name' => $survey->name,

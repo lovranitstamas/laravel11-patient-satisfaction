@@ -36,6 +36,10 @@ class StoreResponseMutation extends Mutation
         'name' => 'submitter_name',
         'type' => Type::getNullableType(Type::string()),
       ],
+      'gender' => [
+        'name' => 'gender',
+        'type' => Type::getNullableType(Type::string()),
+      ],
       'email' => [
         'name' => 'email',
         'type' => Type::getNullableType(Type::string()),
@@ -114,8 +118,10 @@ class StoreResponseMutation extends Mutation
       $args['question_id'] = $question_id;
       $args['response'] = $response;
 
+      //saving
       $item = Response::create($args);
 
+      //response
       if (!$createdResponse) {
         $createdResponse = $item;
       }
@@ -126,7 +132,8 @@ class StoreResponseMutation extends Mutation
     if ($createdResponse && count($answers)) {
       if (!empty($args['email'])) {
         Notification::route('mail', $args['email'])->notify(
-          new EmailNotification('Kérdőív kitöltve', $args['submitter_name'], $clonedAnswers, 0)
+          new EmailNotification(
+            'Kérdőív kitöltve', $args['submitter_name'], $args['gender'], $clonedAnswers, 0)
         );
       }
 
@@ -134,7 +141,8 @@ class StoreResponseMutation extends Mutation
 
       foreach ($adminEmails as $email) {
         Notification::route('mail', $email)->notify(
-          new EmailNotification('Értesítés kérdőív kitöltésről', $args['submitter_name'], $clonedAnswers, 1)
+          new EmailNotification(
+            'Értesítés kérdőív kitöltésről', $args['submitter_name'], $args['gender'], $clonedAnswers, 1)
         );
       }
     }
