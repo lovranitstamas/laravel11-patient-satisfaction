@@ -473,7 +473,9 @@ export default {
       this.isMobile = window.innerWidth <= 768;
     },
 
+    //input
     fetchData() {
+      this.setPage(1);
       this.getSurveyDataBasedOnPagination({search: this.search});
     },
 

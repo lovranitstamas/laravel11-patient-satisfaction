@@ -495,9 +495,11 @@ export default {
       this.$refs['b-modal-form-error'].hide();
     },
 
+    //first select
     handleSurveyChange(selectedValue) {
       this.selectedSurveyId = selectedValue;
 
+      this.setPage(1);
       this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
     },
 
@@ -506,7 +508,9 @@ export default {
       this.isMobile = window.innerWidth <= 768;
     },
 
+    //input
     fetchData() {
+      this.setPage(1);
       this.getQuestionData({search: this.search, surveyId: this.selectedSurveyId});
     },
 

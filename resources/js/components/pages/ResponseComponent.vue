@@ -203,13 +203,6 @@ export default {
     init() {
     },
 
-    handleSurveyChange(selectedValue) {
-      this.selectedSurveyId = selectedValue;
-
-      this.setPage(1);
-      this.getResponseData({search: this.search, surveyId: this.selectedSurveyId});
-    },
-
     // --------- exporting ---------
     exportFilteredCollection() {
       this.exportMessage = '';
@@ -230,7 +223,17 @@ export default {
       this.isMobile = window.innerWidth <= 768;
     },
 
+    //first select
+    handleSurveyChange(selectedValue) {
+      this.selectedSurveyId = selectedValue;
+
+      this.setPage(1);
+      this.getResponseData({search: this.search, surveyId: this.selectedSurveyId});
+    },
+
+    //second select
     fetchData() {
+      this.setPage(1);
       this.getResponseData({search: this.search, surveyId: this.selectedSurveyId});
     },
 
