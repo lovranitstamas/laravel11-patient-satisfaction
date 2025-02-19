@@ -3,7 +3,7 @@
     <v-pagination
         :length="last_page"
         :total-visible="isMobile ? 1 : last_page"
-        :value="current_page"
+        v-model="current_page"
         @update:modelValue="callback"
         rounded="circle"
 
