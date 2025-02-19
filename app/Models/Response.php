@@ -11,6 +11,7 @@ class Response extends Model
 {
   protected $fillable = [
     'submitter_name',
+    'gender',
     'email',
     'survey_id',
     'question_id',

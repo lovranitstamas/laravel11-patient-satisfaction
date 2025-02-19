@@ -29,6 +29,10 @@ class ResponseType extends GraphQLType
         'type' => Type::getNullableType(Type::string()),
         'description' => 'The submitter name is a string',
       ],
+      'gender' => [
+        'type' => Type::getNullableType(Type::string()),
+        'description' => 'The gender is a string',
+      ],
       'email' => [
         'type' => Type::getNullableType(Type::string()),
         'description' => 'The email is a string',
