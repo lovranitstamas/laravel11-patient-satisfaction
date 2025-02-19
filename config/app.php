@@ -13,7 +13,7 @@ return [
   |
   */
 
-  'name' => env('APP_NAME', 'Laravel'),
+  'name' => env('APP_NAME', 'Beteg elégedettségi kérdőív'),
   'blade_render_mode' => env('BLADE_RENDER_MODE', 1),
   'question_limit' => env('QUESTION_LIMIT', 7),
 
