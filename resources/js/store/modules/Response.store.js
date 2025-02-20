@@ -9,8 +9,8 @@ export const TYPES = {
 const initialState = () => ({
   mobileHeaders: [
     {
-      title: "ID<br>Kérdés",
-      value: "id_response",
+      title: "Kérdés<br>Válasz",
+      value: "question_response",
       align: 'center',
       sortable: false,
       width: '100%'
@@ -237,7 +237,7 @@ const getters = {
     return e;
   }).map(item => ({
     ...item,
-    id_response: `<b>${item.id}</b><br/>${item.response || ''}`
+    question_response: `<b>${item.question.question}</b><br/>${item.response || ''}`
   })),
   responseCollectionInitStateLength: (state) => state.responsesInitStateLength
 };

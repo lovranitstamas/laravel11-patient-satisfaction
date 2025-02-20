@@ -65,8 +65,8 @@
       >
 
         <!-- HTML megjelenítése az id_response oszlopban -->
-        <template v-slot:item.id_response="{ item }">
-          <span v-html="item.id_response"></span>
+        <template v-slot:item.question_response="{ item }">
+          <span v-html="item.question_response"></span>
         </template>
 
         <!-- header -->
