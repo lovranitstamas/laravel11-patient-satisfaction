@@ -52,4 +52,8 @@ export default {
   left: 50%;
   right: 50%
 }
+
+/deep/ ul.v-pagination__list{
+  padding: 0 !important;
+}
 </style>
