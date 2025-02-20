@@ -110,7 +110,7 @@
         <!-- mobile/button -->
         <template v-slot:item="{ item }" v-if="isMobile">
           <div class="d-flex justify-content-center align-items-center text-center text-uppercase mt-1">
-            <span v-html="item.id_question" class="d-block ms-5"></span>
+            <span v-html="item.id_name" class="d-block ms-5"></span>
             <v-icon
                 v-if="!item.exists_in_responses"
                 @click="loadSurveyData(item)"
