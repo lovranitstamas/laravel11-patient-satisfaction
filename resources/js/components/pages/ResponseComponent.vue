@@ -8,6 +8,7 @@
 
       <button class="btn btn-primary my-3" v-if="responseCollection.length && isBaseDataLoaded"
               @click.prevent="exportFilteredCollection()"
+              :disabled="exporting"
       >Exportálás a kiválasztott kérdőív alapján
       </button>
 
@@ -129,6 +130,7 @@ export default {
 
       selectedSurveyId: null,
 
+      exporting: false,
       exportMessage: ''
     }
   },
@@ -205,14 +207,17 @@ export default {
 
     // --------- exporting ---------
     exportFilteredCollection() {
+      this.exporting = true;
       this.exportMessage = '';
 
       DataService.ExportFilteredResponses(this.selectedSurveyId).then(() => {
+        this.exporting = false;
         this.exportMessage = "Exportálás megtörtént";
         setTimeout(() => {
           this.exportMessage = '';
         }, 4000)
       }).catch((err) => {
+        this.exporting = false;
         console.log(err);
         this.errors.push(err.response.data.message)
       });
